@@ -1,34 +1,55 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+// app/(tabs)/_layout.tsx
+import { Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
+        tabBarStyle: {
+          backgroundColor: "#FFFFFF",
+          borderTopColor: "#E5E5E5",
+          borderTopWidth: 1,
+          height: 70,
+          paddingBottom: 16,
+          paddingTop: 8,
+        },
+        tabBarActiveTintColor: "#007AFF",
+        tabBarInactiveTintColor: "#8E8E93",
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "500",
+        },
+      }}
+    >
+      <Tabs.Screen 
+        name="inicio" 
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
+          title: "Inicio",
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons 
+              name={focused ? "home" : "home-outline"} 
+              size={size} 
+              color={color} 
+            />
+          ),
+        }} 
       />
-      <Tabs.Screen
-        name="explore"
+      
+      <Tabs.Screen 
+        name="configuracion" 
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
+          title: "Configuración",
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons 
+              name={focused ? "settings" : "settings-outline"} 
+              size={size} 
+              color={color} 
+            />
+          ),
+        }} 
       />
     </Tabs>
   );
