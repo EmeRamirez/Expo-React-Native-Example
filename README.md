@@ -1,50 +1,83 @@
-# Welcome to your Expo app 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# 📱 Documentación de la Aplicación React Native con Expo
 
-## Get started
+### Descripción
+Esta aplicación fue desarrollada con el fin de explorar el framework Expo. No tiene ningún fin de lucro y es de carácter educativo.
 
-1. Install dependencies
+### Características
+✅ Framework: React Native con Expo
 
-   ```bash
-   npm install
-   ```
+✅ Navegación: Expo Router (File-based routing)
 
-2. Start the app
+✅ Lenguaje: TypeScript para type safety
 
-   ```bash
-   npx expo start
-   ```
+✅ Estado Global: Context API con AuthProvider
 
-In the output, you'll find options to open the app in a
+✅ UI Components: Componentes reutilizables y personalizables
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+✅ Autenticación: Sistema de login con usuarios mock
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+✅ Layout: CustomHeader inteligente con navegación condicional
 
-## Get a fresh project
+✅ Desarrollo: Asistencia con IA para agilizar desarrollo (Diseño de vistas)
 
-When you're ready, run:
+### Requisitos Previos
+Node.js (Versión 18 o superior)
 
-```bash
-npm run reset-project
+Tener instalado Expo CLI
+
+(Opcional) Tener instalado Expo Go en el dispositivo móvil
+
+### Instalación
+#### 1. Clonar el repositorio
+```
+git clone <url-del-repositorio>
+cd ev-1
+```
+#### 2. Instalar dependencias
+```
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+#### 3. Iniciar el servidor de desarrollo
+```
+npm start
+```
 
-## Learn more
+#### 4. (Opcional) Escanear el código QR con la app Expo Go o ejecutar en emulador/simulador:
 
-To learn more about developing your project with Expo, look at the following resources:
+##### - Para iOS: presiona 'i'
+##### - Para Android: presiona 'a'
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-## Join the community
+### Estructura del proyecto
 
-Join our community of developers creating universal apps.
+```
+mi-proyecto-react-native/
+├── app/                    # Directorio principal de la app (Expo Router)
+│   ├── (tabs)/            # Grupo de rutas para tabs
+│   │   ├── _layout.tsx    # Layout de las tabs
+│   │   ├── inicio.tsx     # Pantalla de inicio
+│   │   └── configuracion.tsx # Pantalla de configuración
+│   ├── login.tsx          # Pantalla de login
+│   ├── index.tsx          # Pantalla principal/landing
+│   └── _layout.tsx        # Layout raíz de la app
+├── assets/                # Recursos estáticos
+│   └── images/           # Iconos, imágenes
+├── components/           # Componentes reutilizables
+│   ├── ui/              # Componentes de interfaz
+│   │   └── Button.tsx   # Botón personalizado
+│   └── layout/          # Componentes de layout
+│       └── CustomHeader.tsx # Header personalizado
+├── context/             # Contextos de React
+│   └── AuthContext.tsx  # Contexto de autenticación
+├── types/               # Definiciones TypeScript
+│   └── auth.ts         # Tipos para autenticación
+├── data/               # Datos mock y estáticos
+    └── mockUsers.ts    # Usuarios de prueba
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+##### Desarrollado por grupo Compila o Lloro - IPSS 2025
+
+
