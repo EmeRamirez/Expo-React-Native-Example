@@ -80,4 +80,7 @@ mi-proyecto-react-native/
 
 ##### Desarrollado por grupo Compila o Lloro - IPSS 2025
 
+- Amanecer Cabrera
+- Camila Astorga
+- Emerson Ramírez
 
