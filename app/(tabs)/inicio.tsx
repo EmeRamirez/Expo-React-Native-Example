@@ -1,7 +1,10 @@
 // app/(tabs)/inicio.tsx
-import { View, Text, StyleSheet } from "react-native";
 import CustomHeader from "@/components/layout/CustomHeader";
+import ToDoList from "@/components/ToDoList";
 import Button from "@/components/ui/Button";
+import { mockTasks } from "@/data/mockTasks";
+import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function InicioScreen() {
 
@@ -16,7 +19,7 @@ export default function InicioScreen() {
   return (
     <View style={styles.container}>
       <CustomHeader 
-        title="Inicio" 
+        title="Mis tareas" 
         showBackButton={false}
       />
       
@@ -25,19 +28,28 @@ export default function InicioScreen() {
         <Text style={styles.welcomeSubtitle}>
           Esta es tu pantalla principal de la aplicación
         </Text>
-        
-        <View style={styles.actionsContainer}>
+
+        <View style={styles.borderBottomContainer}>
           <Button 
-            title="Acción Principal" 
+            title="Añadir una tarea" 
             onPress={() => handleAction(1)} 
-            variant="primary" 
+            variant="primary"
+            startIcon={
+              <Ionicons 
+                name="add-circle-outline" 
+                size={20} 
+                color="#ffffffff" 
+              />
+            }
+            fullWidth
           />
-          
-          <Button 
-            title="Acción Secundaria" 
-            onPress={() => handleAction(2)} 
-            variant="secondary" 
-          />
+        </View>
+
+        <View style={styles.tasksSection}>
+          <Text style={styles.sectionTitle}>Mis Tareas</Text>
+          <View style={styles.tasksContainer}>
+            <ToDoList tasks={mockTasks} />
+          </View>
         </View>
       </View>
     </View>
@@ -51,9 +63,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingHorizontal: 24,
+    marginTop: 32,
   },
   welcomeTitle: {
     fontSize: 28,
@@ -69,8 +80,28 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     lineHeight: 22,
   },
-  actionsContainer: {
+  borderBottomContainer: {
     width: '100%',
     gap: 12,
+    alignItems: 'center',
+    paddingBottom: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E5E5'
+  },
+  tasksSection: {
+    flex: 1,
+    width: '100%',
+    marginTop: 16,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  tasksContainer: {
+    flex: 1,
+    width: '100%',
   },
 });

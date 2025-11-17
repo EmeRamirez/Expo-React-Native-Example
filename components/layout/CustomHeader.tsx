@@ -1,7 +1,8 @@
 // components/layout/CustomHeader.tsx
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface CustomHeaderProps {
   title?: string;
@@ -25,7 +26,7 @@ export default function CustomHeader({
   };
 
   return (
-    <View style={styles.header}>
+    <SafeAreaView style={styles.header}>
       {showBackButton && (
         <Pressable 
           onPress={handleBack}
@@ -43,22 +44,21 @@ export default function CustomHeader({
       
       {/* Espacio para balancear el diseño cuando hay botón de volver */}
       {showBackButton && <View style={styles.placeholder} />}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
-    width: '100%',
+    width: '100%', 
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingTop: 12,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
-    marginTop: 30,
+    borderBottomColor: '#E5E5E5'
   },
   backButton: {
     flexDirection: 'row',
