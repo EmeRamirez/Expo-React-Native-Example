@@ -1,19 +1,19 @@
 // app/login.tsx
-import { useState } from "react";
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  StyleSheet, 
-  ScrollView, 
-  KeyboardAvoidingView, 
-  Platform,
-  Alert
-} from "react-native";
-import { useRouter } from "expo-router";
-import { useAuth } from "@/context/AuthContext";
-import Button from "@/components/ui/Button";
 import CustomHeader from "@/components/layout/CustomHeader";
+import Button from "@/components/ui/Button";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
+} from "react-native";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -59,90 +59,92 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <CustomHeader 
-        title="Iniciar Sesión" 
-        showBackButton={true}
-      />
-      
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+    <View style={styles.container}>
+      <KeyboardAvoidingView 
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <View style={styles.content}>
-          {/* Título y descripción */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Bienvenido</Text>
-            <Text style={styles.subtitle}>
-              Ingresa tus credenciales para continuar
-            </Text>
-          </View>
-
-          {/* Formulario */}
-          <View style={styles.form}>
-            {/* Campo Email */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Correo electrónico</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="tu@email.com"
-                placeholderTextColor="#999"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-                textContentType="emailAddress"
-              />
+        <CustomHeader 
+          title="Iniciar Sesión" 
+          showBackButton={true}
+        />
+        
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.content}>
+            {/* Título y descripción */}
+            <View style={styles.header}>
+              <Text style={styles.title}>Bienvenido</Text>
+              <Text style={styles.subtitle}>
+                Ingresa tus credenciales para continuar
+              </Text>
             </View>
 
-            {/* Campo Contraseña */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Contraseña</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="••••••••"
-                placeholderTextColor="#999"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoCapitalize="none"
-                autoComplete="password"
-                textContentType="password"
+            {/* Formulario */}
+            <View style={styles.form}>
+              {/* Campo Email */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Correo electrónico</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="tu@email.com"
+                  placeholderTextColor="#999"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  textContentType="emailAddress"
+                />
+              </View>
+
+              {/* Campo Contraseña */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Contraseña</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="••••••••"
+                  placeholderTextColor="#999"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoComplete="password"
+                  textContentType="password"
+                />
+              </View>
+
+              {/* Olvidé mi contraseña */}
+              <Button 
+                title="¿Olvidaste tu contraseña?"
+                onPress={handleForgotPassword}
+                variant="secondary"
+                style={styles.forgotPasswordButton}
+                textStyle={styles.forgotPasswordText}
               />
+
+              {/* Botón de Login */}
+              <Button 
+                title={isLoggingIn ? "Iniciando sesión..." : "Iniciar Sesión"}
+                onPress={handleLogin}
+                variant="primary"
+                disabled={isLoggingIn}
+                style={[
+                  styles.loginButton,
+                  isLoggingIn && styles.loginButtonDisabled
+                ]}
+              />
+
+        
             </View>
-
-            {/* Olvidé mi contraseña */}
-            <Button 
-              title="¿Olvidaste tu contraseña?"
-              onPress={handleForgotPassword}
-              variant="secondary"
-              style={styles.forgotPasswordButton}
-              textStyle={styles.forgotPasswordText}
-            />
-
-            {/* Botón de Login */}
-            <Button 
-              title={isLoggingIn ? "Iniciando sesión..." : "Iniciar Sesión"}
-              onPress={handleLogin}
-              variant="primary"
-              disabled={isLoggingIn}
-              style={[
-                styles.loginButton,
-                isLoggingIn && styles.loginButtonDisabled
-              ]}
-            />
-
-       
           </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
