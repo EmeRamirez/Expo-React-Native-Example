@@ -4,17 +4,13 @@ import ToDoList from "@/components/ToDoList";
 import Button from "@/components/ui/Button";
 import { mockTasks } from "@/data/mockTasks";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function InicioScreen() {
 
-  const handleAction = (num: number) => {
-    if (num === 1) {
-      console.log("Acción principal realizada");
-    } else {
-      console.log("Wena cabros");
-    }
-  };
+  const [showForm, setShowForm] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -32,7 +28,7 @@ export default function InicioScreen() {
         <View style={styles.borderBottomContainer}>
           <Button 
             title="Añadir una tarea" 
-            onPress={() => handleAction(1)} 
+            onPress={() => router.push("/add_task")} 
             variant="primary"
             startIcon={
               <Ionicons 
