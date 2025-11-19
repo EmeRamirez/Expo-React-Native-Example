@@ -13,6 +13,6 @@ export interface Task {
   imgUrl?: string;
   location?: Coordinates;
   completedAt?: Date | null; 
-  priority?: 'low' | 'medium' | 'high';
+  priority?: 'Alta' | 'Media' | 'Baja';
 }
 

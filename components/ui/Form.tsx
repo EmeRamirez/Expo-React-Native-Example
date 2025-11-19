@@ -1,71 +1,112 @@
 import Button from "@/components/ui/Button";
+import Map from "@/components/ui/Map";
+import { Task } from "@/types/tasks";
 import { Ionicons } from "@expo/vector-icons";
 import * as crypto from 'expo-crypto';
 import * as DocumentPicker from "expo-document-picker";
 import { File, Paths } from 'expo-file-system';
+import { router } from "expo-router";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
 import { DropDownSelect } from "react-native-simple-dropdown-select";
+
+interface Coordinate {
+  latitude: number;
+  longitude: number;
+}
 
 export default function Form() {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<Task>({
     defaultValues: {
-      titulo: "",
-      descripcion: "",
-      prioridad: "",
-      imagen: null,
-    },
+      title: '',
+      description: '',
+      completed: false,
+      creationDate: new Date(),
+      imgUrl: undefined,
+      location: undefined,
+      completedAt: null,
+      priority: undefined,
+      },
   });
 // La logica al final dar click en enviar formulario
-  const onSubmit = (data: any) => {
-      const tareasBDFile = new File(Paths.cache, 'tareas.json'); 
+const onSubmit = (data: any) => {
+  const tareasBDFile = new File(Paths.cache, 'tareas.json'); 
 
-      if (!tareasBDFile.exists){
-        tareasBDFile.create();
-      }
-
-      // Guardar la imagen en el sistema de archivos
-      const uuid = crypto.randomUUID();
-      const imageFile = new File(Paths.cache, `${uuid}.${selectedDocuments[0].uri.split('.').pop()}`);
-      if (!imageFile.exists){
-
-        try {
-              imageFile.create();
-      }
-      catch (error) {
-        console.log("Error creating image file: ", error);
-      }
-      // Enviamos los datos al archivo JSON
-      const tarea = {
-        titulo: data.titulo,
-        descripcion: data.descripcion,
-        prioridad: data.prioridad.id,
-        imagenPath: imageFile.uri,
-      };
-      const oldText = tareasBDFile.textSync();
-      const newText = oldText ? `${oldText.slice(0, -1)},${JSON.stringify(tarea)}]` : `[${JSON.stringify(tarea)}]`;
-      tareasBDFile.write(newText);
-      // Alert.alert("Éxito", "Tarea guardada correctamente");
-      // console.log("Tarea guardada: ", tarea);
-      console.log(oldText);
-      // router.replace("/(tabs)/inicio");
-      
-    };
-
+  if (!tareasBDFile.exists){
+    tareasBDFile.create();
   }
+  const oldText = tareasBDFile.textSync();
+  
+  // CORRECCIÓN: Parsear el JSON y obtener el último ID
+  let tareas = [];
+  let nuevoId = 1;
+  
+  if (oldText && oldText.trim() !== '') {
+    try {
+      tareas = JSON.parse(oldText);
+      // Asegurarnos que es un array
+      if (Array.isArray(tareas) && tareas.length > 0) {
+        // Encontrar el ID máximo y sumar 1
+        const maxId = Math.max(...tareas.map(tarea => parseInt(tarea.id) || 0));
+        nuevoId = maxId + 1;
+      }
+    } catch (error) {
+      console.log("Error parsing JSON, starting fresh: ", error);
+      tareas = [];
+    }
+  }
+
+  // Guardar la imagen en el sistema de archivos
+  const uuid = crypto.randomUUID();
+  const imageFile = new File(Paths.cache, `${uuid}.${selectedDocuments[0].uri.split('.').pop()}`);
+  if (!imageFile.exists) {
+    try {
+      imageFile.create();
+    } catch (error) {
+      console.log("Error creating image file: ", error);
+    }
+  }
+
+  // CORRECCIÓN: Usar el nuevoId calculado correctamente
+  const tarea: Task = {
+    id: nuevoId.toString(), // Usamos el ID calculado
+    title: data.title,
+    description: data.description,
+    completed: false,
+    creationDate: new Date(),
+    imgUrl: imageFile.uri,
+    location: selectedLocation ?? undefined,
+    completedAt: null,
+    priority: data.priority.name,
+  };
+
+  tareas.push(tarea);
+  
+  try {
+    tareasBDFile.write(JSON.stringify(tareas, null, 2));
+    Alert.alert("Éxito", "Tarea guardada correctamente");
+    console.log("Tarea guardada: ", tarea);
+      router.replace({
+      pathname: "/(tabs)/inicio",
+      params: { refresh: Date.now() } // Timestamp único
+    });
+  } catch (error) {
+    console.log("Error writing to file: ", error);
+  }
+};
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<any>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Coordinate | null>(null);
 
   let prioridades = [
-    { id: 1, name: "Baja" },
-    { id: 2, name: "Media" },
+    { id: 1, name: "Baja"},
+    { id: 2, name: "Media"  },
     { id: 3, name: "Alta" },
-    { id: 4, name: "Maxima" },
   ];
 
   const [selectedDocuments, setSelectedDocuments] = useState<
@@ -107,9 +148,9 @@ export default function Form() {
               value={value}
             />
           )}
-          name="titulo"
+          name="title"
         />
-        {errors.titulo && <Text>This is required.</Text>}
+        {errors.title && <Text>This is required.</Text>}
 
         <Controller
           control={control}
@@ -125,9 +166,9 @@ export default function Form() {
               value={value}
             />
           )}
-          name="descripcion"
+          name="description"
         />
-        {errors.descripcion && <Text>This is required.</Text>}
+        {errors.description && <Text>This is required.</Text>}
 
 
         <Controller
@@ -153,12 +194,12 @@ export default function Form() {
           }}
           subViewStyle={styles.input}
           labelField="prioridad"
-          valueField="id"
+          valueField="name"
         />
           )}
-          name="prioridad"
+          name="priority"
         />
-        {errors.prioridad && <Text>This is required.</Text>}
+        {errors.priority && <Text>This is required.</Text>}
 
         <View style={styles.imageUploadButton}>
           <Button 
@@ -176,7 +217,15 @@ export default function Form() {
           />
         </View>
 
-        <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+
+<Map onLocationSelect={(location) => {
+  setSelectedLocation(location);
+  setValue( location)
+}}
+/>
+
+
+        <Button title="Submit" style={styles.submitButton} onPress={handleSubmit(onSubmit)} />
       </View>
     </>
   );
@@ -236,5 +285,9 @@ imageUploadButton: {
   tasksContainer: {
     flex: 1,
     width: '100%',
+  },
+  submitButton: {
+    margin: 24,
+
   },
 })

@@ -11,7 +11,11 @@ import { StyleSheet, Text, View } from "react-native";
 export default function InicioScreen() {
 
   const [showForm, setShowForm] = useState(false);
-
+  
+  
+  
+  
+  
   return (
     <View style={styles.container}>
       <CustomHeader 
@@ -44,7 +48,7 @@ export default function InicioScreen() {
         <View style={styles.tasksSection}>
           <Text style={styles.sectionTitle}>Mis Tareas</Text>
           <View style={styles.tasksContainer}>
-            <ToDoList tasks={mockTasks} />
+            {mockTasks.length > 0 ? <ToDoList tasks={mockTasks} /> : <Text>Que vacío está esto, agrega una tarea para empezar.</Text>}
           </View>
         </View>
       </View>

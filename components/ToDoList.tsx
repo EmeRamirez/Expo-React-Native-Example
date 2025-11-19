@@ -3,12 +3,12 @@ import { Task } from '@/types/tasks';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import {
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 interface ToDoListProps {
@@ -16,6 +16,19 @@ interface ToDoListProps {
 }
 
 export default function ToDoList({ tasks }: ToDoListProps) {
+  // Debugging - remueve esto después
+  React.useEffect(() => {
+    console.log('Tasks en ToDoList:', tasks);
+    tasks.forEach((task, index) => {
+      console.log(`Task ${index}:`, {
+        title: task.title,
+        priority: task.priority,
+        hasPriority: !!task.priority,
+        priorityType: typeof task.priority
+      });
+    });
+  }, [tasks]);
+
   const handleCompleteTask = (taskId: string) => {
     Alert.alert(
       'Completar Tarea',
@@ -32,17 +45,60 @@ export default function ToDoList({ tasks }: ToDoListProps) {
     );
   };
 
+  const getPriorityValue = (priority: any): string => {
+    if (!priority) return '';
+    
+    // Si es string, devolverlo directamente
+    if (typeof priority === 'string') {
+      return priority.toLowerCase();
+    }
+    
+    // Si es objeto, buscar las propiedades comunes
+    if (typeof priority === 'object') {
+      return (
+        priority.value?.toLowerCase() ||
+        priority.name?.toLowerCase() ||
+        priority.label?.toLowerCase() ||
+        ''
+      );
+    }
+    
+    return '';
+  };
+
+  const getPriorityStyle = (priority: any) => {
+    const priorityValue = getPriorityValue(priority);
+    
+    const priorityStyles = {
+      high: styles.priorityHigh,
+      medium: styles.priorityMedium,
+      low: styles.priorityLow,
+      alta: styles.priorityHigh,
+      media: styles.priorityMedium,
+      baja: styles.priorityLow,
+    };
+    
+    return priorityStyles[priorityValue as keyof typeof priorityStyles] || styles.priorityMedium;
+  };
+
+  const getPriorityText = (priority: any): string => {
+    const priorityValue = getPriorityValue(priority);
+    
+    const priorityTexts = {
+      high: 'Alta',
+      medium: 'Media', 
+      low: 'Baja',
+      alta: 'Alta',
+      media: 'Media',
+      baja: 'Baja',
+    };
+    
+    return priorityTexts[priorityValue as keyof typeof priorityTexts] || 'Media';
+  };
+
   const renderTaskItem = (task: Task) => {
     const isCompleted = task.completed;
-
-    const getPriorityStyle = (priority: string) => {
-        const priorityStyles = {
-            high: styles.priorityHigh,
-            medium: styles.priorityMedium,
-            low: styles.priorityLow,
-        };
-        return priorityStyles[priority as keyof typeof priorityStyles];
-    };
+    const hasPriority = task.priority && getPriorityValue(task.priority);
 
     return (
       <View key={task.id} style={[
@@ -76,14 +132,13 @@ export default function ToDoList({ tasks }: ToDoListProps) {
               {task.description}
             </Text>
           )}
-          {task.priority && (
+          {hasPriority && (
             <View style={[
                 styles.priorityBadge,
                 getPriorityStyle(task.priority)
             ]}>
               <Text style={styles.priorityText}>
-                {task.priority === 'high' ? 'Alta' : 
-                 task.priority === 'medium' ? 'Media' : 'Baja'}
+                {getPriorityText(task.priority)}
               </Text>
             </View>
           )}
@@ -96,7 +151,7 @@ export default function ToDoList({ tasks }: ToDoListProps) {
             onPress={() => handleShowCompletedTaskInfo(task.id)}
             activeOpacity={0.7}
           >
-            <Ionicons name="add" size={24} color="#007AFF" />
+            <Ionicons name="information-circle-outline" size={24} color="#007AFF" />
           </TouchableOpacity>
         )}
       </View>
