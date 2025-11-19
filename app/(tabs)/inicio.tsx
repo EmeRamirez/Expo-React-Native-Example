@@ -2,18 +2,38 @@
 import CustomHeader from "@/components/layout/CustomHeader";
 import ToDoList from "@/components/ToDoList";
 import Button from "@/components/ui/Button";
-import { mockTasks } from "@/data/mockTasks";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { useState } from "react";
+import { File, Paths } from "expo-file-system";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function InicioScreen() {
 
-  const [showForm, setShowForm] = useState(false);
+  const [tasks, setTasks] = useState([]);  
   
-  
-  
+  useFocusEffect(
+    useCallback(()=>{
+      const loadTasks = async () => {
+        const file = new File(Paths.cache, 'tareas.json')
+        try{
+          const exists = file.exists
+          if(!exists){
+            setTasks([]);
+            return;
+          }
+          const fileContent = file.textSync();
+          const parsed = fileContent ? JSON.parse(fileContent) : [];
+          setTasks(parsed)
+        } catch(err) {
+            console.log("Error cargando tareas:", err);
+            setTasks([]);
+        }
+      };
+      loadTasks();
+    }, [])
+
+  );
   
   
   return (
@@ -48,7 +68,7 @@ export default function InicioScreen() {
         <View style={styles.tasksSection}>
           <Text style={styles.sectionTitle}>Mis Tareas</Text>
           <View style={styles.tasksContainer}>
-            {mockTasks.length > 0 ? <ToDoList tasks={mockTasks} /> : <Text>Que vacío está esto, agrega una tarea para empezar.</Text>}
+            {tasks.length > 0 ? <ToDoList tasks={ tasks} /> : <Text>Que vacío está esto, agrega una tarea para empezar.</Text>}
           </View>
         </View>
       </View>
