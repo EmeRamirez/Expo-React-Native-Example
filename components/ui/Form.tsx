@@ -3,10 +3,9 @@ import { Ionicons } from "@expo/vector-icons";
 import * as crypto from 'expo-crypto';
 import * as DocumentPicker from "expo-document-picker";
 import { File, Paths } from 'expo-file-system';
-import { router } from "expo-router";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { DropDownSelect } from "react-native-simple-dropdown-select";
 
 export default function Form() {
@@ -48,10 +47,14 @@ export default function Form() {
         prioridad: data.prioridad.id,
         imagenPath: imageFile.uri,
       };
-      tareasBDFile.write(JSON.stringify(tarea));
-      Alert.alert("Éxito", "Tarea guardada correctamente");
-      console.log("Tarea guardada: ", tarea);
-      router.replace("/(tabs)/inicio");
+      const oldText = tareasBDFile.textSync();
+      const newText = oldText ? `${oldText.slice(0, -1)},${JSON.stringify(tarea)}]` : `[${JSON.stringify(tarea)}]`;
+      tareasBDFile.write(newText);
+      // Alert.alert("Éxito", "Tarea guardada correctamente");
+      // console.log("Tarea guardada: ", tarea);
+      console.log(oldText);
+      // router.replace("/(tabs)/inicio");
+      
     };
 
   }
