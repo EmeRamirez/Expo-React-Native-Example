@@ -2,6 +2,7 @@
 import { Task } from '@/types/tasks';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
+
 import {
   Alert,
   ScrollView,
@@ -85,9 +86,6 @@ export default function ToDoList({ tasks }: ToDoListProps) {
     const priorityValue = getPriorityValue(priority);
     
     const priorityTexts = {
-      high: 'Alta',
-      medium: 'Media', 
-      low: 'Baja',
       alta: 'Alta',
       media: 'Media',
       baja: 'Baja',
@@ -142,6 +140,14 @@ export default function ToDoList({ tasks }: ToDoListProps) {
               </Text>
             </View>
           )}
+          <TouchableOpacity
+            style={styles.infoButton}
+            onPress={() => Alert.alert("De veritas quieres eliminar?")}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="trash-bin-outline" size={24} color="#007AFF" />
+          </TouchableOpacity>
+
         </View>
 
         {/* Icono para tareas completadas */}
@@ -243,5 +249,6 @@ const styles = StyleSheet.create({
   infoButton: {
     padding: 4,
     marginLeft: 8,
+    alignSelf: 'flex-end'
   },
 });

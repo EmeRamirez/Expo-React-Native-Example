@@ -154,7 +154,7 @@ export default function Form() {
           )}
           name="title"
         />
-        {errors.title && <Text>This is required.</Text>}
+        {errors.title && <Text>Este campo es requerido.</Text>}
 
         <Controller
           control={control}
@@ -172,7 +172,7 @@ export default function Form() {
           )}
           name="description"
         />
-        {errors.description && <Text>This is required.</Text>}
+        {errors.description && <Text>Este campo es requerido.</Text>}
 
         <Controller
           control={control}
@@ -200,7 +200,6 @@ export default function Form() {
           )}
           name="priority"
         />
-        {errors.priority && <Text>This is required.</Text>}
 
         <View style={styles.imageUploadButton}>
           <Button
@@ -208,7 +207,7 @@ export default function Form() {
             onPress={pickDocuments}
             variant="outlined"
             startIcon={
-              <Ionicons name="add-circle-outline" size={20} color="#ffffffff" />
+              <Ionicons name="add-circle-outline" size={20} color="blue" />
             }
             fullWidth
           />
