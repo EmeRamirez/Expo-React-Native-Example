@@ -1,12 +1,15 @@
 // app/(tabs)/inicio.tsx
 import CustomHeader from "@/components/layout/CustomHeader";
+import NewTaskForm from "@/components/NewTaskForm";
 import ToDoList from "@/components/ToDoList";
 import Button from "@/components/ui/Button";
 import { mockTasks } from "@/data/mockTasks";
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function InicioScreen() {
+  const [isCreatingTask, setIsCreatingTask] = useState(false);
 
   const handleAction = (num: number) => {
     if (num === 1) {
@@ -15,6 +18,13 @@ export default function InicioScreen() {
       console.log("Wena cabros");
     }
   };
+
+  // Si está creando una tarea, mostrar el componente del formulario
+  if (isCreatingTask) {
+    return (
+      <NewTaskForm onBack={() => setIsCreatingTask(false)} />
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -32,7 +42,7 @@ export default function InicioScreen() {
         <View style={styles.borderBottomContainer}>
           <Button 
             title="Añadir una tarea" 
-            onPress={() => handleAction(1)} 
+            onPress={() => { setIsCreatingTask(true); }} 
             variant="primary"
             startIcon={
               <Ionicons 

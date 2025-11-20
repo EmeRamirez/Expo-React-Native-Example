@@ -1,10 +1,13 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
 import CustomHeader from "@/components/layout/CustomHeader";
+import Button from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function PerfilScreen() {
-  const { user } = useAuth();
-
+  const { user, logout } = useAuth();
+  const router = useRouter();
   return (
     <View style={styles.container}>
       {/* Custom header */}
@@ -14,7 +17,27 @@ export default function PerfilScreen() {
         <Text>Pantalla de perfil</Text>
         <Text>Bienvenido {user?.name}</Text>
       </View>
+
+      <Button 
+        title="Cerrar Sesión"
+        onPress={() => { 
+          logout();
+          router.replace("/login");
+        }}
+        variant="primary"
+        startIcon={
+          <Ionicons 
+            name="log-out-outline" 
+            size={20} 
+            color="#ffffffff" 
+          />
+        
+        }
+        style={{ marginHorizontal: 60, marginBottom: 20 }}
+      />
     </View>
+
+
   );
 }
 
@@ -28,4 +51,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
 });

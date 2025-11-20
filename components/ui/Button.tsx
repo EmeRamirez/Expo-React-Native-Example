@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#007AFF',
   },
   secondaryContainer: {
-    backgroundColor: '#E5E5EA',
+    backgroundColor: '#1a8737ff',
   },
   outlinedContainer: {
     backgroundColor: 'transparent',
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   secondaryText: {
-    color: '#000000',
+    color: '#FFFFFF',
   },
   outlinedText: {
     color: '#007AFF',
