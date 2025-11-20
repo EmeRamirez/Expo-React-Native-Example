@@ -4,7 +4,7 @@ export const mockUsers: User[] = [
   {
     id: '1',
     name: 'Emerson Ramirez',
-    email: 'emerson@example.com',
+    email: 'eme',
     role: 'admin',
   },
   {
@@ -28,7 +28,7 @@ export const mockUsers: User[] = [
 ];
 
 export const userPasswords: Record<string, string> = {
-  'emerson@example.com': 'emerson123',
+  'eme': 'eme123',
   'amanecer@example.com': 'amanecer123',
   'carlos@example.com': 'carlos123',
   'camila@example.com': 'camila123',

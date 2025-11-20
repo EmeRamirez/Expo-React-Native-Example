@@ -43,7 +43,7 @@ export default function LoginScreen() {
         setEmail("");
         setPassword("");
         
-        Alert.alert("Éxito", result.message);
+        // Alert.alert("Éxito", result.message);
       } else {
         Alert.alert("Error", result.message);
       }

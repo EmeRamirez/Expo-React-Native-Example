@@ -7,7 +7,7 @@ export const mockTasks: Task[] = [
     title: 'Comprar víveres en el supermercado',
     description: 'Leche, huevos, pan, frutas y verduras frescas',
     completed: false,
-    creationDate: new Date('2024-01-15T08:00:00'),
+    creationDate: new Date('2025-01-15T08:00:00'),
     priority: 'high',
     location: {
       latitude: -33.4489,
@@ -20,8 +20,8 @@ export const mockTasks: Task[] = [
     title: 'Reunión con el equipo de desarrollo',
     description: 'Revisar avances del proyecto y planificar sprint próximo',
     completed: true,
-    creationDate: new Date('2024-01-10T10:30:00'),
-    completedAt: new Date('2024-01-12T11:00:00'),
+    creationDate: new Date('2025-01-10T10:30:00'),
+    completedAt: new Date('2025-01-12T11:00:00'),
     priority: 'medium',
     location: {
       latitude: -33.4194,
@@ -34,7 +34,7 @@ export const mockTasks: Task[] = [
     title: 'Hacer ejercicio en el parque',
     description: '30 minutos de running y estiramientos',
     completed: false,
-    creationDate: new Date('2024-01-14T07:00:00'),
+    creationDate: new Date('2025-01-14T07:00:00'),
     priority: 'medium',
     imgUrl: 'https://example.com/images/exercise.jpg'
   },
@@ -43,7 +43,7 @@ export const mockTasks: Task[] = [
     title: 'Leer libro de React Native',
     description: 'Avanzar hasta el capítulo 8 sobre navegación',
     completed: false,
-    creationDate: new Date('2024-01-13T20:00:00'),
+    creationDate: new Date('2025-01-13T20:00:00'),
     priority: 'low',
     location: {
       latitude: -33.4567,
@@ -56,8 +56,8 @@ export const mockTasks: Task[] = [
     title: 'Llamar al médico para cita',
     description: 'Solicitar cita para chequeo anual',
     completed: true,
-    creationDate: new Date('2024-01-08T09:15:00'),
-    completedAt: new Date('2024-01-08T10:00:00'),
+    creationDate: new Date('2025-01-08T09:15:00'),
+    completedAt: new Date('2025-01-08T10:00:00'),
     priority: 'high'
   },
   {

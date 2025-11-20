@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Esta aplicación necesita acceso a la cámara.",
+        "NSLocationWhenInUseUsageDescription": "Esta aplicación necesita acceso a tu ubicación."
+      }
     },
     "android": {
       "adaptiveIcon": {
