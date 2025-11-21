@@ -30,6 +30,18 @@ export const getTasksFromStorage = async (): Promise<Task[]> => {
     }
 };
 
+export const deleteTaskFromStorage = async (taskId: string): Promise<boolean> => {
+    try {
+        const tasks = await getTasksFromStorage();
+        const filteredTasks = tasks.filter(task => task.id !== taskId);
+        await saveTasksToStorage(filteredTasks);
+        return true;
+    } catch (error) {
+        console.error("Error deleting task from storage:", error);
+        return false;
+    }
+};
+
 export const saveSessionToStorage = async (sessionData: User) => {
     try {
         const sessionJson = JSON.stringify(sessionData);

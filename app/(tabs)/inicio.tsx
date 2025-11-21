@@ -32,8 +32,9 @@ export default function InicioScreen() {
   const handleSaveToStorage = async (newTask: Task) => {
     console.log(newTask);
     // Se añade la nueva tarea a la lista de tareas del usuario
-    setUserTasks((prevTasks) => [...prevTasks, newTask]);
-    const res = await saveTasksToStorage([...userTasks, newTask]);
+    const allTasks = await getTasksFromStorage();
+    const res = await saveTasksToStorage([...allTasks, newTask]);
+    
     if (!res) {
       alert("Error al guardar la tarea");
     } else {
@@ -135,7 +136,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#000000',
-    marginBottom: 16,
+    marginBottom: 7,
     textAlign: 'center',
   },
   tasksContainer: {

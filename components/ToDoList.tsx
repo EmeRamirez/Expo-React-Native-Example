@@ -1,14 +1,16 @@
 // components/ToDoList.tsx
 import { Task } from '@/types/tasks';
+import { deleteTaskFromStorage } from '@/utils/storage';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import { useState } from 'react';
 import {
   Alert,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
 interface ToDoListProps {
@@ -23,6 +25,9 @@ interface ToDoListProps {
 */
 
 export default function ToDoList({ tasks }: ToDoListProps) {
+  const [expandedTasks, setExpandedTasks] = useState<{[key: string]: boolean}>({});
+  const [isDeleting, setIsDeleting] = useState<{[key: string]: boolean}>({});
+
   const handleCompleteTask = (taskId: string) => {
     Alert.alert(
       'Completar Tarea',
@@ -32,15 +37,40 @@ export default function ToDoList({ tasks }: ToDoListProps) {
   };
 
   const handleShowCompletedTaskInfo = (taskId: string) => {
-    Alert.alert(
-      'Información de Tarea',
-      `Se desplegará la info de la tarea completada ${taskId}`,
-      [{ text: 'OK' }]
-    );
+    setExpandedTasks(prev => ({
+      ...prev,
+      [taskId]: !prev[taskId] // Alternar el estado de expansión para esta tarea específica
+    }));
+  };
+
+  const handleDeleteTask = async(taskId: string) => {
+    if (isDeleting[taskId]) return; // Prevenir múltiples pulsaciones
+
+    setIsDeleting(prev => ({
+      ...prev,
+      [taskId]: true
+    }));
+
+    const res = await deleteTaskFromStorage(taskId);
+
+    if (res) {
+      Alert.alert(
+        'Eliminar Tarea',
+        `Tarea ${taskId} eliminada correctamente.`,
+        [{ text: 'OK' }]
+      );
+    } else {
+      Alert.alert(
+        'Error',
+        `No se pudo eliminar la tarea ${taskId}.`,
+        [{ text: 'OK' }]
+      );
+    }
   };
 
   const renderTaskItem = (task: Task) => {
     const isCompleted = task.completed;
+    const isExpanded = expandedTasks[task.id];
 
     const getPriorityStyle = (priority: string) => {
         const priorityStyles = {
@@ -52,61 +82,96 @@ export default function ToDoList({ tasks }: ToDoListProps) {
     };
 
     return (
-      <View key={task.id} style={[
-        styles.taskItem,
-        isCompleted && styles.completedTaskItem
-      ]}>
-        {/* Radio button para todas las tareas */}
-        <TouchableOpacity
-          style={styles.radioButton}
-          onPress={() => isCompleted ? handleShowCompletedTaskInfo(task.id) : handleCompleteTask(task.id)}
-          activeOpacity={0.7}
-        >
-          <View style={styles.radioOuter}>
-            {isCompleted && <View style={styles.radioInner} />}
-          </View>
-        </TouchableOpacity>
+      <View 
+        key={task.id}
+        style={styles.generalContainer}
+      >
 
-        {/* Contenido de la tarea */}
-        <View style={styles.taskContent}>
-          <Text style={[
-            styles.taskTitle,
-            isCompleted && styles.completedText
-          ]}>
-            {task.title}
-          </Text>
-          {task.description && (
-            <Text style={[
-              styles.taskDescription,
-              isCompleted && styles.completedText
-            ]}>
-              {task.description}
-            </Text>
-          )}
-          {task.priority && (
-            <View style={[
-                styles.priorityBadge,
-                getPriorityStyle(task.priority)
-            ]}>
-              <Text style={styles.priorityText}>
-                {task.priority === 'high' ? 'Alta' : 
-                 task.priority === 'medium' ? 'Media' : 'Baja'}
-              </Text>
-            </View>
-          )}
-        </View>
-
-        {/* Icono para tareas completadas */}
-        {isCompleted && (
+        <View style={[
+          styles.taskItem,
+          isCompleted && styles.completedTaskItem
+        ]}>
+          {/* Radio button para todas las tareas */}
           <TouchableOpacity
-            style={styles.infoButton}
-            onPress={() => handleShowCompletedTaskInfo(task.id)}
+            style={styles.radioButton}
+            onPress={() => isCompleted ? handleShowCompletedTaskInfo(task.id) : handleCompleteTask(task.id)}
             activeOpacity={0.7}
           >
-            <Ionicons name="add" size={24} color="#007AFF" />
+            <View style={styles.radioOuter}>
+              {isCompleted && <View style={styles.radioInner} />}
+            </View>
           </TouchableOpacity>
-        )}
+
+          {/* Contenido de la tarea */}
+          <View style={styles.taskContent}>
+            <Text style={[
+              styles.taskTitle,
+              isCompleted && styles.completedText
+            ]}>
+              {task.title}
+            </Text>
+            {task.description && (
+              <Text style={[
+                styles.taskDescription,
+                isCompleted && styles.completedText
+              ]}>
+                {task.description}
+              </Text>
+            )}
+            {task.priority && (
+              <View style={[
+                  styles.priorityBadge,
+                  getPriorityStyle(task.priority)
+              ]}>
+                <Text style={styles.priorityText}>
+                  {task.priority === 'high' ? 'Alta' : 
+                  task.priority === 'medium' ? 'Media' : 'Baja'}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {/* Iconos para "Ver más" y "Eliminar" */}
+          <View style={{ flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <TouchableOpacity
+              style={styles.infoButton}
+              onPress={() => handleShowCompletedTaskInfo(task.id)}
+              activeOpacity={0.7}
+            >
+              <Ionicons 
+                name={isExpanded ? "chevron-up" : "chevron-down"} 
+                size={24} 
+                color="#007AFF" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDeleteTask(task.id)}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="trash" size={24} color="#FF3B30" />
+            </TouchableOpacity>
+          </View>
+
+        </View>
+
+        {isExpanded && (
+          // ACA SE DEBE RENDERIZAR UN COMPONENTE QUE RECIBE TASK Y MUESTRA LA INFO ADICIONAL
+          <View style={styles.expandedContainer}>
+            <Text>Se muestra la info de la tarea completada {task.id}</Text>
+            {task.imgUri && (
+              <Image source={{ uri: task.imgUri }} style={styles.taskPhoto} />
+            )}
+            {task.location && (
+              <Text style={styles.taskLocation}>
+                Ubicación: 
+                {/* {task.location} */}
+              </Text>
+            )}
+          </View>
+          )}
       </View>
+      
     );
   };
 
@@ -118,6 +183,18 @@ export default function ToDoList({ tasks }: ToDoListProps) {
 };
 
 const styles = StyleSheet.create({
+  generalContainer: { 
+    flexDirection: 'column', 
+    borderBottomColor: '#E5E5EA', 
+    borderBottomWidth: 1, 
+    paddingVertical: 16,
+    width: '100%',
+  },
+  expandedContainer: {
+    marginTop: 18,
+    width: '100%',
+    paddingHorizontal: 6,
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -125,9 +202,6 @@ const styles = StyleSheet.create({
   taskItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA',
     backgroundColor: '#FFFFFF',
   },
   completedTaskItem: {
@@ -195,5 +269,19 @@ const styles = StyleSheet.create({
   infoButton: {
     padding: 4,
     marginLeft: 8,
+  },
+  deleteButton: {
+    padding: 4,
+    marginLeft: 8,
+  },
+  taskPhoto: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  taskLocation: {
+    fontSize: 14,
+    color: '#37373aff',
   },
 });

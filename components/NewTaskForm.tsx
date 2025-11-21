@@ -87,7 +87,7 @@ export default function NewTaskForm({ onBack, onSave }: NewTaskFormProps) {
                 description,
                 completed: false,
                 creationDate: new Date(),
-                imgUrl: photo || undefined,
+                imgUri: photo || undefined,
                 location: location || undefined,
                 priority,
             };

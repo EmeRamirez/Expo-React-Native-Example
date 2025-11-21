@@ -10,26 +10,26 @@ export const mockUsers: User[] = [
   {
     id: 2,
     name: 'Amanecer Cabrera',
-    email: 'amanecer@example.com',
+    email: 'amanecer',
     role: 'user',
   },
   {
     id: 3,
     name: 'Carlos Gonzalez',
-    email: 'carlos@example.com',
+    email: 'carlos',
     role: 'user',
   },
   {
     id: 4,
     name: 'Camila Astorga',
-    email: 'camila@example.com',
+    email: 'camila',
     role: 'user',
   }
 ];
 
 export const userPasswords: Record<string, string> = {
   'eme': 'eme123',
-  'amanecer@example.com': 'amanecer123',
-  'carlos@example.com': 'carlos123',
-  'camila@example.com': 'camila123',
+  'amanecer': 'amanecer123',
+  'carlos': 'carlos123',
+  'camila': 'camila123',
 };

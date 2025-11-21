@@ -11,7 +11,7 @@ export interface Task {
   description?: string;
   completed: boolean;
   creationDate?: Date;
-  imgUrl?: string;
+  imgUri?: string;
   location?: Coordinates;
   completedAt?: Date | null; 
   priority?: 'low' | 'medium' | 'high';
