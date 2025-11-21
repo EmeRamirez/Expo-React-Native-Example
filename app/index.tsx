@@ -1,10 +1,20 @@
-import { Text, View, Pressable, StyleSheet, Image } from "react-native";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 const ipssLogo = require("../assets/images/ipss-logo.png");
 
 export default function Index() {
   const router = useRouter();
+  const { user } = useAuth();
+
+  // Se redirige a la pantalla de inicio si el usuario ya está logueado
+  useEffect(() => {
+    if (user) {
+      router.replace("/(tabs)/inicio");
+    }
+  }, [user]);
 
   const handleNavigate = () => {
     // router.push('/inicio');

@@ -1,7 +1,8 @@
 // context/AuthContext.tsx
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, AuthContextType, LoginCredentials } from '@/types/auth';
 import { mockUsers, userPasswords } from '@/data/mockUsers';
+import { AuthContextType, User } from '@/types/auth';
+import { clearSessionFromStorage, getSessionFromStorage, saveSessionToStorage } from '@/utils/storage';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 // Creamos el contexto con valores por defecto
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,19 +28,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Efecto para verificar si hay un usuario logueado al iniciar la app
   useEffect(() => {
-    checkStoredAuth();
-  }, []);
+    getSessionFromStorage().then((storedUser) => {
+      if (storedUser) {
+        setUser(storedUser);
+      }
+      setIsLoading(false);
+    }); 
+  }, [user]);
 
-  const checkStoredAuth = async () => {
-    try {
-      // Simulamos una verificación de autenticación almacenada
-      // En una app real, aquí verificaríamos un token en AsyncStorage
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error verificando autenticación:', error);
-      setIsLoading(false);
-    }
-  };
+  // useEffect para redirigir a inicio si el usuario está logueado
+  // useEffect(() => {
+  //   if (user) {
+  //     router.replace("/(tabs)/inicio");
+  //   }
+    
+  // }, [user]);
+
 
   const login = async (email: string, password: string): Promise<{ success: boolean; message: string }> => {
     setIsLoading(true);
@@ -72,6 +76,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // 3. Login exitoso
       setUser(foundUser);
+      await saveSessionToStorage(foundUser);
       
       // En una app real, aquí guardaríamos el token en AsyncStorage
       // await AsyncStorage.setItem('userToken', 'fake-token');
@@ -93,8 +98,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = () => {
     setUser(null);
-    // En una app real, aquí limpiaríamos el token de AsyncStorage
-    // await AsyncStorage.removeItem('userToken');
+    clearSessionFromStorage();
   };
 
   const value: AuthContextType = {

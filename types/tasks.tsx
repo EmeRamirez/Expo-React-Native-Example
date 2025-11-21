@@ -6,6 +6,7 @@ interface Coordinates {
 
 export interface Task {
   id: string;
+  userId: number;
   title: string;
   description?: string;
   completed: boolean;

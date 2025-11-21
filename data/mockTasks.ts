@@ -4,6 +4,7 @@ import { Task } from "@/types/tasks";
 export const mockTasks: Task[] = [
   {
     id: '1',
+    userId: 1,
     title: 'Comprar víveres en el supermercado',
     description: 'Leche, huevos, pan, frutas y verduras frescas',
     completed: false,
@@ -17,6 +18,7 @@ export const mockTasks: Task[] = [
   },
   {
     id: '2',
+    userId: 1,
     title: 'Reunión con el equipo de desarrollo',
     description: 'Revisar avances del proyecto y planificar sprint próximo',
     completed: true,
@@ -31,6 +33,7 @@ export const mockTasks: Task[] = [
   },
   {
     id: '3',
+    userId: 1,
     title: 'Hacer ejercicio en el parque',
     description: '30 minutos de running y estiramientos',
     completed: false,
@@ -40,6 +43,7 @@ export const mockTasks: Task[] = [
   },
   {
     id: '4',
+    userId: 2,
     title: 'Leer libro de React Native',
     description: 'Avanzar hasta el capítulo 8 sobre navegación',
     completed: false,
@@ -53,6 +57,7 @@ export const mockTasks: Task[] = [
   },
   {
     id: '5',
+    userId: 2,
     title: 'Llamar al médico para cita',
     description: 'Solicitar cita para chequeo anual',
     completed: true,
@@ -62,6 +67,7 @@ export const mockTasks: Task[] = [
   },
   {
     id: '6',
+    userId: 2,
     title: 'Preparar presentación para cliente',
     description: 'Crear slides y practicar el pitch',
     completed: false,
@@ -76,6 +82,7 @@ export const mockTasks: Task[] = [
   },
   {
     id: '7',
+    userId: 3,
     title: 'Limpiar y organizar el escritorio',
     description: 'Ordenar documentos y limpiar el área de trabajo',
     completed: true,
@@ -85,6 +92,7 @@ export const mockTasks: Task[] = [
   },
   {
     id: '8',
+    userId: 3,
     title: 'Investigar nuevas librerías de React Native',
     description: 'Revisar Expo SDK 49 y nuevas funcionalidades',
     completed: false,
@@ -98,6 +106,7 @@ export const mockTasks: Task[] = [
   },
   {
     id: '9',
+    userId: 3,
     title: 'Reservar restaurante para cena',
     description: 'Mesa para 4 personas el viernes a las 20:00',
     completed: true,
@@ -112,6 +121,7 @@ export const mockTasks: Task[] = [
   },
   {
     id: '10',
+    userId: 3,
     title: 'Backup de archivos importantes',
     description: 'Hacer copia de seguridad en disco externo',
     completed: false,

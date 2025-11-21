@@ -1,5 +1,7 @@
 import CustomHeader from "@/components/layout/CustomHeader";
 import Button from "@/components/ui/Button";
+import { useAuth } from "@/context/AuthContext";
+import { Task } from "@/types/tasks";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from '@react-native-picker/picker';
 import { launchCameraAsync, requestCameraPermissionsAsync } from 'expo-image-picker';
@@ -18,9 +20,12 @@ import {
 // Se crean las props si es necesario en el futuro
 interface NewTaskFormProps {
     onBack?: () => void;
+    onSave: (newTask: Task) => void;
 }
 
-export default function NewTaskForm({ onBack }: NewTaskFormProps) {
+export default function NewTaskForm({ onBack, onSave }: NewTaskFormProps) {
+    const { user } = useAuth();
+
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [isCapturingPhoto, setIsCapturingPhoto] = useState(false);
@@ -62,6 +67,34 @@ export default function NewTaskForm({ onBack }: NewTaskFormProps) {
             setIsCapturingPhoto(false);
         } finally {
             setIsCapturingPhoto(false);
+        }
+    };
+
+    const handleSaveTask = () => {
+        if (isSaving) return;
+
+        try {
+            setIsSaving(true);
+            // En este punto se podrían agregar validaciones adicionales
+
+            // Se obtiene la ubicación (expo-location)
+
+            // Lógica para guardar la tarea
+            const newTask: Task = {
+                id: Date.now().toString(),
+                userId: user?.id || 0,
+                title,
+                description,
+                completed: false,
+                creationDate: new Date(),
+                imgUrl: photo || undefined,
+                location: location || undefined,
+                priority,
+            };
+            // Guardar la tarea en el almacenamiento (AsyncStorage)
+            onSave(newTask);
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -136,7 +169,7 @@ export default function NewTaskForm({ onBack }: NewTaskFormProps) {
                             <Button
                                 title="Guardar tarea"
                                 startIcon={<Ionicons name="save" size={20} color="#ffffffff" />}
-                                onPress={() => { console.log("Tarea guardada"); }}
+                                onPress={() => { handleSaveTask(); }}
                                 variant="secondary"
                                 style={{ marginTop: 10, width: 200 }}
                             />

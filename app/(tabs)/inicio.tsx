@@ -3,26 +3,48 @@ import CustomHeader from "@/components/layout/CustomHeader";
 import NewTaskForm from "@/components/NewTaskForm";
 import ToDoList from "@/components/ToDoList";
 import Button from "@/components/ui/Button";
-import { mockTasks } from "@/data/mockTasks";
+import { useAuth } from "@/context/AuthContext";
+// import { mockTasks } from "@/data/mockTasks";
+import { Task } from "@/types/tasks";
+import { getTasksFromStorage, saveTasksToStorage } from "@/utils/storage";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-export default function InicioScreen() {
-  const [isCreatingTask, setIsCreatingTask] = useState(false);
 
-  const handleAction = (num: number) => {
-    if (num === 1) {
-      console.log("Acción principal realizada");
+export default function InicioScreen() {
+  const { user } = useAuth();
+  const [isCreatingTask, setIsCreatingTask] = useState(false);
+  const [userTasks, setUserTasks] = useState<Task[]>([]);
+
+  // Se filtran las tareas del usuario actual desde AsyncStorage
+  useEffect(() => {
+    getTasksFromStorage().then((allTasks) => {
+      if (user) {
+        const filteredTasks = allTasks.filter(task => task.userId === user.id);
+        setUserTasks(filteredTasks);
+      } else {
+        setUserTasks([]);
+      }
+    });
+  }, [user]);
+
+  const handleSaveToStorage = async (newTask: Task) => {
+    console.log(newTask);
+    // Se añade la nueva tarea a la lista de tareas del usuario
+    setUserTasks((prevTasks) => [...prevTasks, newTask]);
+    const res = await saveTasksToStorage([...userTasks, newTask]);
+    if (!res) {
+      alert("Error al guardar la tarea");
     } else {
-      console.log("Wena cabros");
+      setIsCreatingTask(false);
     }
-  };
+  }
 
   // Si está creando una tarea, mostrar el componente del formulario
   if (isCreatingTask) {
     return (
-      <NewTaskForm onBack={() => setIsCreatingTask(false)} />
+      <NewTaskForm onBack={() => setIsCreatingTask(false)} onSave={handleSaveToStorage}/>
     );
   }
 
@@ -58,7 +80,13 @@ export default function InicioScreen() {
         <View style={styles.tasksSection}>
           <Text style={styles.sectionTitle}>Mis Tareas</Text>
           <View style={styles.tasksContainer}>
-            <ToDoList tasks={mockTasks} />
+            {userTasks.length === 0 ? (
+              <Text style={{ textAlign: 'center', color: '#8E8E93' }}>
+                No tienes tareas creadas aún. Añade una nueva tarea para comenzar.
+              </Text>
+            ): (
+              <ToDoList tasks={userTasks} />
+            )}
           </View>
         </View>
       </View>

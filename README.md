@@ -83,4 +83,5 @@ mi-proyecto-react-native/
 - Amanecer Cabrera
 - Camila Astorga
 - Emerson Ramírez
+- Carlos Gonzalez
 

@@ -3,17 +3,24 @@ import { Task } from '@/types/tasks';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import {
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 interface ToDoListProps {
   tasks: Task[];
 }
+
+// EN ESTE COMPONENTE SE DEBE AÑADIR:
+/* 
+  - Boton de eliminacion de tarea
+  - Función para completar tarea
+  - Contenedor desplegable para ver foto y ubicación de la tarea (si existen)
+*/
 
 export default function ToDoList({ tasks }: ToDoListProps) {
   const handleCompleteTask = (taskId: string) => {

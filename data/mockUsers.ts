@@ -2,25 +2,25 @@ import { User } from '@/types/auth';
 
 export const mockUsers: User[] = [
   {
-    id: '1',
+    id: 1,
     name: 'Emerson Ramirez',
     email: 'eme',
     role: 'admin',
   },
   {
-    id: '2',
+    id: 2,
     name: 'Amanecer Cabrera',
     email: 'amanecer@example.com',
     role: 'user',
   },
   {
-    id: '3',
+    id: 3,
     name: 'Carlos Gonzalez',
     email: 'carlos@example.com',
     role: 'user',
   },
   {
-    id: '4',
+    id: 4,
     name: 'Camila Astorga',
     email: 'camila@example.com',
     role: 'user',
