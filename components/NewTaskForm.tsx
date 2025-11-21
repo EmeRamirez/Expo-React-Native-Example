@@ -5,6 +5,7 @@ import { Task } from "@/types/tasks";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from '@react-native-picker/picker';
 import { launchCameraAsync, requestCameraPermissionsAsync } from 'expo-image-picker';
+import { getCurrentPositionAsync, getForegroundPermissionsAsync, requestForegroundPermissionsAsync } from "expo-location";
 import { useState } from "react";
 import {
     Image,
@@ -70,14 +71,50 @@ export default function NewTaskForm({ onBack, onSave }: NewTaskFormProps) {
         }
     };
 
-    const handleSaveTask = () => {
+    const handleGetLocation = async () => {
+        if (isFetchingLocation) return null;
+
+        try {
+            setIsFetchingLocation(true);
+
+            const { status } = await getForegroundPermissionsAsync();
+
+            if (status !== 'granted') {
+                const { status: reqStatus } = await requestForegroundPermissionsAsync();
+                if (reqStatus !== 'granted') {
+                    alert('Permiso para acceder a la ubicación denegado');
+                    setIsFetchingLocation(false);
+                    return null;
+                }
+            }
+
+            const location = await getCurrentPositionAsync({});
+            setLocation({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+            });
+
+            return {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+            };
+        } catch (error) {
+            console.error("Error al obtener ubicación:", error);
+            return null;
+        } finally {
+            setIsFetchingLocation(false);
+        }
+    };
+
+    const handleSaveTask = async () => {
         if (isSaving) return;
 
         try {
             setIsSaving(true);
-            // En este punto se podrían agregar validaciones adicionales
 
-            // Se obtiene la ubicación (expo-location)
+            // Obtener ubicación actual
+            let newLocation = null;
+            newLocation = await handleGetLocation();
 
             // Lógica para guardar la tarea
             const newTask: Task = {
@@ -88,7 +125,7 @@ export default function NewTaskForm({ onBack, onSave }: NewTaskFormProps) {
                 completed: false,
                 creationDate: new Date(),
                 imgUri: photo || undefined,
-                location: location || undefined,
+                location: newLocation || undefined,
                 priority,
             };
             // Guardar la tarea en el almacenamiento (AsyncStorage)
