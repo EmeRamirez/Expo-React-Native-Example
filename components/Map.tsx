@@ -1,21 +1,19 @@
+import { Coordinates } from "@/types/tasks";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from 'expo-location';
 import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 
-interface Coordinate {
-  latitude: number;
-  longitude: number;
-}
+
 
 interface MapProps {
-  onLocationSelect: (location: Coordinate) => void;
-  initialLocation?: Coordinate;
+  onLocationSelect: (location: Coordinates) => void;
+  initialLocation?: Coordinates;
 }
 
 export default function Map({ onLocationSelect, initialLocation }: MapProps) {
-  const [selectedLocation, setSelectedLocation] = useState<Coordinate | null>(
+  const [selectedLocation, setSelectedLocation] = useState<Coordinates | null>(
     initialLocation || null
   );
   const [region, setRegion] = useState({
@@ -75,16 +73,6 @@ export default function Map({ onLocationSelect, initialLocation }: MapProps) {
     }
   };
 
-  const confirmLocation = () => {
-    if (selectedLocation) {
-      onLocationSelect(selectedLocation);
-      Alert.alert(
-        "Ubicación confirmada", 
-        `Lat: ${selectedLocation.latitude.toFixed(6)}\nLng: ${selectedLocation.longitude.toFixed(6)}`
-      );
-    }
-  };
-
   // Obtener ubicación actual al montar el componente
   useEffect(() => {
     getCurrentLocation();
@@ -110,8 +98,8 @@ export default function Map({ onLocationSelect, initialLocation }: MapProps) {
         region={region}
         onPress={handleMapPress}
         showsUserLocation={true}
-        showsCompass={true}
-        showsScale={true}
+        showsCompass={false}
+        showsScale={false}
         showsMyLocationButton={false}
       >
         {selectedLocation && (
@@ -143,16 +131,6 @@ export default function Map({ onLocationSelect, initialLocation }: MapProps) {
           <Ionicons name="navigate" size={24} color="#007AFF" />
         </TouchableOpacity>
       )}
-
-      {/* Indicador de instrucciones */}
-      <View style={styles.instructions}>
-        <Text style={styles.instructionsText}>
-          📍 Toca el mapa para seleccionar ubicación
-        </Text>
-        <Text style={styles.instructionsText}>
-          👐 Arrastra el marcador para moverlo
-        </Text>
-      </View>
     </View>
   );
 }

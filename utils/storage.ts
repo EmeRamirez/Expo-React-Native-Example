@@ -30,6 +30,23 @@ export const getTasksFromStorage = async (): Promise<Task[]> => {
     }
 };
 
+export const updateCompletedTaskStatus = async (taskId: string, completed: boolean): Promise<boolean> => {
+    try {
+        const tasks = await getTasksFromStorage();
+        const updatedTasks = tasks.map(task => {
+            if (task.id === taskId) {
+                return { ...task, completed };
+            }
+            return task;
+        });
+        await saveTasksToStorage(updatedTasks);
+        return true;
+    } catch (error) {
+        console.error("Error updating task status in storage:", error);
+        return false;
+    }
+};
+
 export const deleteTaskFromStorage = async (taskId: string): Promise<boolean> => {
     try {
         const tasks = await getTasksFromStorage();

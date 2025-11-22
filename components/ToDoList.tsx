@@ -1,6 +1,6 @@
 // components/ToDoList.tsx
 import { Task } from '@/types/tasks';
-import { deleteTaskFromStorage } from '@/utils/storage';
+import { deleteTaskFromStorage, updateCompletedTaskStatus } from '@/utils/storage';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import {
@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import Map from './Map';
 
 interface ToDoListProps {
   tasks: Task[];
@@ -34,6 +35,27 @@ export default function ToDoList({ tasks }: ToDoListProps) {
       `Estás completando la tarea ${taskId}`,
       [{ text: 'OK' }]
     );
+  };
+
+  const toggleTaskStatus = async(taskId: string) => {
+    // Si la tarea ya está completada, se pasa a no completada y viceversa
+    if (expandedTasks[taskId]) {
+      const res = await updateCompletedTaskStatus(taskId, false);
+      if (res) {
+        setExpandedTasks(prev => ({
+          ...prev,
+          [taskId]: false
+        }));
+      }
+    } else {
+      const res = await updateCompletedTaskStatus(taskId, true);
+      if (res) {
+        setExpandedTasks(prev => ({
+          ...prev,
+          [taskId]: true
+        }));
+      }
+    }
   };
 
   const handleShowCompletedTaskInfo = (taskId: string) => {
@@ -94,7 +116,7 @@ export default function ToDoList({ tasks }: ToDoListProps) {
           {/* Radio button para todas las tareas */}
           <TouchableOpacity
             style={styles.radioButton}
-            onPress={() => isCompleted ? handleShowCompletedTaskInfo(task.id) : handleCompleteTask(task.id)}
+            onPress={() => toggleTaskStatus(task.id)}
             activeOpacity={0.7}
           >
             <View style={styles.radioOuter}>
@@ -158,16 +180,15 @@ export default function ToDoList({ tasks }: ToDoListProps) {
         {isExpanded && (
           // ACA SE DEBE RENDERIZAR UN COMPONENTE QUE RECIBE TASK Y MUESTRA LA INFO ADICIONAL
           <View style={styles.expandedContainer}>
-            <Text>Se muestra la info de la tarea completada {task.id}</Text>
-            {task.imgUri && (
+            {/* <Text>Se muestra la info de la tarea completada {task.id}</Text> */}
+            {task.imgUri ? (
               <Image source={{ uri: task.imgUri }} style={styles.taskPhoto} />
-            )}
-            {task.location && (
-              <Text style={styles.taskLocation}>
-                Ubicación: 
-                {/* {task.location} */}
-              </Text>
-            )}
+            ) : <View style={styles.noDetailContainer}><Text style={styles.noDetailText}>No hay foto asociada a esta tarea.</Text></View>}
+            {task.location ? (
+              <View style={styles.mapContainer}>
+                <Map initialLocation={task.location} onLocationSelect={() => {}} />
+              </View>
+            ) : <View style={styles.noDetailContainer}><Text style={styles.noDetailText}>No hay ubicación asociada a esta tarea.</Text></View>}
           </View>
           )}
       </View>
@@ -191,9 +212,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   expandedContainer: {
+    flexDirection: 'row',
     marginTop: 18,
     width: '100%',
     paddingHorizontal: 6,
+    justifyContent: 'space-between',
   },
   container: {
     flex: 1,
@@ -275,13 +298,33 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   taskPhoto: {
-    width: '100%',
-    height: 200,
+    width: 150,
+    height: 150,
     borderRadius: 8,
     marginBottom: 8,
   },
   taskLocation: {
     fontSize: 14,
     color: '#37373aff',
+  },
+  mapContainer: {
+    width: 150,
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  noDetailContainer: {
+    width: 150,
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F2F2F7',
+  },
+  noDetailText: {
+    fontSize: 12,
+    color: '#8E8E93',
+    textAlign: 'center',
   },
 });

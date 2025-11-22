@@ -1,7 +1,7 @@
 // components/layout/CustomHeader.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StatusBar, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface CustomHeaderProps {
@@ -26,7 +26,11 @@ export default function CustomHeader({
   };
 
   return (
-    <SafeAreaView style={styles.header}>
+    <>
+    {/* íconos oscuros habilitados en el menú superior */}
+    <StatusBar barStyle="dark-content" />
+    
+    <SafeAreaView  style={styles.header} edges={['top']} >
       {showBackButton && (
         <Pressable 
           onPress={handleBack}
@@ -45,6 +49,8 @@ export default function CustomHeader({
       {/* Espacio para balancear el diseño cuando hay botón de volver */}
       {showBackButton && <View style={styles.placeholder} />}
     </SafeAreaView>
+  
+    </>
   );
 }
 
@@ -56,6 +62,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingTop: 12,
+      paddingBottom: 12,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5'
