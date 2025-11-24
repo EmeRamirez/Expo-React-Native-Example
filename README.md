@@ -11,13 +11,15 @@ Esta aplicación fue desarrollada con el fin de explorar el framework Expo. No t
 
 ✅ Lenguaje: TypeScript para type safety
 
-✅ Estado Global: Context API con AuthProvider
+✅ Estado Global y Autenticación: Context API con AuthProvider y manejo de sesiones
 
 ✅ UI Components: Componentes reutilizables y personalizables
 
-✅ Autenticación: Sistema de login con usuarios mock
-
 ✅ Layout: CustomHeader inteligente con navegación condicional
+
+✅ Persistencia de datos: Persistencia de datos por medio de AsyncStorage
+
+✅ API para uso de cámara y GPS: Funcionalidades compatibles con iOS y Android
 
 ✅ Desarrollo: Asistencia con IA para agilizar desarrollo (Diseño de vistas)
 
@@ -64,7 +66,7 @@ mi-proyecto-react-native/
 │   └── _layout.tsx        # Layout raíz de la app
 ├── assets/                # Recursos estáticos
 │   └── images/           # Iconos, imágenes
-├── components/           # Componentes reutilizables
+├── components/           # Componentes reutilizables varios
 │   ├── ui/              # Componentes de interfaz
 │   │   └── Button.tsx   # Botón personalizado
 │   └── layout/          # Componentes de layout
@@ -73,8 +75,11 @@ mi-proyecto-react-native/
 │   └── AuthContext.tsx  # Contexto de autenticación
 ├── types/               # Definiciones TypeScript
 │   └── auth.ts         # Tipos para autenticación
+│   └── tasks.ts        # Tipos para tareas y location
 ├── data/               # Datos mock y estáticos
-    └── mockUsers.ts    # Usuarios de prueba
+│   └── mockUsers.ts    # Usuarios de prueba
+├── utils/              # Utilidades varias
+    └── storage.ts      # funciones CRUD con AsyncStorage
 ```
 
 
@@ -85,3 +90,4 @@ mi-proyecto-react-native/
 - Emerson Ramírez
 - Carlos Gonzalez
 
+* Este README fue desarrollado con ayuda de IA
