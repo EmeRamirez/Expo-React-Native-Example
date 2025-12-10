@@ -2,8 +2,9 @@
 import CustomHeader from "@/components/layout/CustomHeader";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
+import { useLogin } from "@/services/hooks/useLogin";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -17,11 +18,28 @@ import {
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { login, isLoading } = useAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { mutate: login, isPending, error, data } = useLogin();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+   // Redirigir si ya está autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/(tabs)/inicio");
+    }
+  }, [isAuthenticated]);
+
+  // Mostrar error del hook
+  useEffect(() => {
+    if (error) {
+      setFormError(error.message);
+    } else {
+      setFormError(null);
+    }
+  }, [error]);
 
   const handleLogin = async () => {
     // Validación básica
@@ -30,33 +48,44 @@ export default function LoginScreen() {
       return;
     }
 
-    setIsLoggingIn(true);
-    
-    try {
-      const result = await login(email, password);
-      
-      if (result.success) {
-        // Login exitoso - navegar a inicio
-        router.replace("/(tabs)/inicio");
-        
+    // Validación de email básica
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert("Error", "Por favor, ingresa un email válido");
+      return;
+    }
+
+    // Limpiar errores anteriores
+    setFormError(null);
+
+    // Ejecutar login
+    login({ email, password }, {
+      onSuccess: () => {
         // Limpiar formulario
         setEmail("");
         setPassword("");
-        
-        // Alert.alert("Éxito", result.message);
-      } else {
-        Alert.alert("Error", result.message);
       }
-    } catch (error) {
-      Alert.alert("Error", "Ocurrió un error inesperado");
-    } finally {
-      setIsLoggingIn(false);
-    }
+    });
   };
 
   const handleForgotPassword = () => {
     Alert.alert("Recuperar contraseña", "Esta funcionalidad estará disponible pronto");
   };
+
+   // Si está cargando la autenticación inicial, mostrar loading
+  if (authLoading) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader 
+          title="Iniciar Sesión" 
+          showBackButton={true}
+        />
+        <View style={styles.loadingContainer}>
+          <Text>Cargando...</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -99,6 +128,7 @@ export default function LoginScreen() {
                   autoCapitalize="none"
                   autoComplete="email"
                   textContentType="emailAddress"
+                  editable={!isPending}
                 />
               </View>
 
@@ -115,8 +145,16 @@ export default function LoginScreen() {
                   autoCapitalize="none"
                   autoComplete="password"
                   textContentType="password"
+                  editable={!isPending}
                 />
               </View>
+
+              {/* Mostrar error si existe */}
+              {formError && (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorText}>{formError}</Text>
+                </View>
+              )}
 
               {/* Olvidé mi contraseña */}
               <Button 
@@ -125,21 +163,20 @@ export default function LoginScreen() {
                 variant="secondary"
                 style={styles.forgotPasswordButton}
                 textStyle={styles.forgotPasswordText}
+                disabled={isPending}
               />
 
               {/* Botón de Login */}
               <Button 
-                title={isLoggingIn ? "Iniciando sesión..." : "Iniciar Sesión"}
+                title={isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
                 onPress={handleLogin}
                 variant="primary"
-                disabled={isLoggingIn}
+                disabled={isPending || !email.trim() || !password.trim()}
                 style={[
                   styles.loginButton,
-                  isLoggingIn && styles.loginButtonDisabled
+                  (isPending || !email.trim() || !password.trim()) && styles.loginButtonDisabled
                 ]}
               />
-
-        
             </View>
           </View>
         </ScrollView>
@@ -152,6 +189,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scrollView: {
     flex: 1,
@@ -202,6 +244,19 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 16,
     color: "#000000",
+  },
+  errorContainer: {
+    backgroundColor: '#FFEBEE',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#FFCDD2',
+  },
+  errorText: {
+    color: '#D32F2F',
+    fontSize: 14,
+    textAlign: 'center',
   },
   forgotPasswordButton: {
     backgroundColor: "transparent",

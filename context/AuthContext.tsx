@@ -1,7 +1,13 @@
 // context/AuthContext.tsx
-import { mockUsers, userPasswords } from '@/data/mockUsers';
 import { AuthContextType, User } from '@/types/auth';
-import { clearSessionFromStorage, getSessionFromStorage, saveSessionToStorage } from '@/utils/storage';
+import {
+  clearSessionFromStorage,
+  clearTokenFromStorage,
+  getSessionFromStorage,
+  getTokenFromStorage,
+  saveSessionToStorage,
+  saveTokenToStorage
+} from '@/utils/storage';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 // Creamos el contexto con valores por defecto
@@ -24,69 +30,43 @@ export function useAuth(): AuthContextType {
 // Componente Provider
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Efecto para verificar si hay un usuario logueado al iniciar la app
   useEffect(() => {
-    getSessionFromStorage().then((storedUser) => {
-      if (storedUser) {
-        setUser(storedUser);
+    const loadStoredData = async () => {
+      try {
+        // Cargar usuario y token desde AsyncStorage
+        const [storedUser, storedToken] = await Promise.all([
+          getSessionFromStorage(),
+          getTokenFromStorage()
+        ]);
+        
+        if (storedUser && storedToken) {
+          setUser(storedUser);
+          setToken(storedToken);
+        }
+      } catch (error) {
+        console.error('Error loading stored auth data:', error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    }); 
-  }, [user]);
-
-  // useEffect para redirigir a inicio si el usuario está logueado
-  // useEffect(() => {
-  //   if (user) {
-  //     router.replace("/(tabs)/inicio");
-  //   }
+    };
     
-  // }, [user]);
+    loadStoredData();
+  }, []);
 
 
   const login = async (email: string, password: string): Promise<{ success: boolean; message: string }> => {
     setIsLoading(true);
     
     try {
-      // Simulamos una petición de login
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // 1. Buscar el usuario por email
-      const foundUser = mockUsers.find(user => user.email === email);
-      
-      if (!foundUser) {
-        setIsLoading(false);
-        return { 
-          success: false, 
-          message: 'Usuario no encontrado' 
-        };
-      }
-
-      // 2. Verificar la contraseña
-      const correctPassword = userPasswords[email];
-      
-      if (password !== correctPassword) {
-        setIsLoading(false);
-        return { 
-          success: false, 
-          message: 'Contraseña incorrecta' 
-        };
-      }
-
-      // 3. Login exitoso
-      setUser(foundUser);
-      await saveSessionToStorage(foundUser);
-      
-      // En una app real, aquí guardaríamos el token en AsyncStorage
-      // await AsyncStorage.setItem('userToken', 'fake-token');
-      
-      setIsLoading(false);
+      // Esta función solo será llamada desde el hook useLogin
       return { 
-        success: true, 
-        message: 'Login exitoso' 
+        success: false, 
+        message: 'Usa useLogin hook en su lugar' 
       };
-
     } catch (error) {
       setIsLoading(false);
       return { 
@@ -96,17 +76,50 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    clearSessionFromStorage();
+  // Función para actualizar el estado después de un login exitoso desde el hook
+  const updateAuthState = async (userData: User, authToken: string) => {
+    try {
+      // Guardar en AsyncStorage
+      await Promise.all([
+        saveSessionToStorage(userData),
+        saveTokenToStorage(authToken)
+      ]);
+      
+      // Actualizar estado
+      setUser(userData);
+      setToken(authToken);
+      
+      return true;
+    } catch (error) {
+      console.error('Error updating auth state:', error);
+      return false;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      // Limpiar AsyncStorage
+      await Promise.all([
+        clearSessionFromStorage(),
+        clearTokenFromStorage()
+      ]);
+      
+      // Limpiar estado
+      setUser(null);
+      setToken(null);
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   const value: AuthContextType = {
     user,
+    token,
     login,
     logout,
+    updateAuthState, // Nueva función
     isLoading,
-    isAuthenticated: !!user, // Convierte user a boolean
+    isAuthenticated: !!user && !!token,
   };
 
   return (

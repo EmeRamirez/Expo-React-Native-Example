@@ -89,3 +89,28 @@ export const clearSessionFromStorage = async () => {
         console.error("Error clearing session from storage:", error);
     }
 };
+
+export const saveTokenToStorage = async (token: string) => {
+    try {
+        await AsyncStorage.setItem("TODOS_APP_TOKEN", token);
+    } catch (error) {
+        console.error("Error saving token to storage:", error);
+    }
+};
+
+export const getTokenFromStorage = async (): Promise<string | null> => {
+    try {
+        return await AsyncStorage.getItem("TODOS_APP_TOKEN");
+    } catch (error) {
+        console.error("Error retrieving token from storage:", error);
+        return null;
+    }
+};
+
+export const clearTokenFromStorage = async () => {
+    try {
+        await AsyncStorage.removeItem("TODOS_APP_TOKEN");
+    } catch (error) {
+        console.error("Error clearing token from storage:", error);
+    }
+};

@@ -132,7 +132,7 @@ export default function ToDoList({ tasks }: ToDoListProps) {
             ]}>
               {task.title}
             </Text>
-            {task.description && (
+            {/* {task.description && (
               <Text style={[
                 styles.taskDescription,
                 isCompleted && styles.completedText
@@ -150,7 +150,7 @@ export default function ToDoList({ tasks }: ToDoListProps) {
                   task.priority === 'medium' ? 'Media' : 'Baja'}
                 </Text>
               </View>
-            )}
+            )} */}
           </View>
 
           {/* Iconos para "Ver más" y "Eliminar" */}
@@ -181,8 +181,8 @@ export default function ToDoList({ tasks }: ToDoListProps) {
           // ACA SE DEBE RENDERIZAR UN COMPONENTE QUE RECIBE TASK Y MUESTRA LA INFO ADICIONAL
           <View style={styles.expandedContainer}>
             {/* <Text>Se muestra la info de la tarea completada {task.id}</Text> */}
-            {task.imgUri ? (
-              <Image source={{ uri: task.imgUri }} style={styles.taskPhoto} />
+            {task.photoUri ? (
+              <Image source={{ uri: task.photoUri }} style={styles.taskPhoto} />
             ) : <View style={styles.noDetailContainer}><Text style={styles.noDetailText}>No hay foto asociada a esta tarea.</Text></View>}
             {task.location ? (
               <View style={styles.mapContainer}>

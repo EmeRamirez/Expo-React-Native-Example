@@ -6,12 +6,12 @@ export interface Coordinates {
 
 export interface Task {
   id: string;
-  userId: number;
+  userId: string;
   title: string;
-  description?: string;
   completed: boolean;
-  imgUri?: string;
+  photoUri?: string;
   location?: Coordinates;
-  priority?: 'low' | 'medium' | 'high';
+  createdAt: string;
+  updatedAt: string;
 }
 

@@ -119,14 +119,13 @@ export default function NewTaskForm({ onBack, onSave }: NewTaskFormProps) {
             // Lógica para guardar la tarea
             const newTask: Task = {
                 id: Date.now().toString(),
-                userId: user?.id || 0,
+                userId: user?.id || '',
                 title,
-                description,
                 completed: false,
-                creationDate: new Date(),
-                imgUri: photo || undefined,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                photoUri: photo || undefined,
                 location: newLocation || undefined,
-                priority,
             };
             // Guardar la tarea en el almacenamiento (AsyncStorage)
             onSave(newTask);

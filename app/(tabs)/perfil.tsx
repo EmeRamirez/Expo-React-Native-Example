@@ -15,7 +15,7 @@ export default function PerfilScreen() {
 
       <View style={styles.content}>
         <Text>Pantalla de perfil</Text>
-        <Text>Bienvenido {user?.name}</Text>
+        <Text>Bienvenido {user?.email}</Text>
       </View>
 
       <Button 
