@@ -16,13 +16,19 @@ export default function PerfilScreen() {
     setIsLoggingOut(true);
     
     try {
-      // 1. Esperar a que logout termine
+      // 1. Cancelar TODAS las queries pendientes primero
+      await queryClient.cancelQueries();
+      
+      // 2. Ejecutar logout (limpia AsyncStorage)
       await logout();
       
-      // 2. Limpiar caché de TanStack Query (IMPORTANTE)
+      // 3. Limpiar caché COMPLETA de TanStack Query
       queryClient.clear();
       
-      // 3. Ahora sí navegar
+      // 4. Pequeño delay para asegurar que todo se limpió
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // 5. Redirigir a login
       router.replace("/login");
       
     } catch (error) {

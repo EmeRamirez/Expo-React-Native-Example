@@ -1,5 +1,5 @@
 // services/base/ApiClient.ts
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { API_URL } from '../../config';
 
 // Tipos para errores de TU API específica
@@ -31,43 +31,6 @@ const axiosInstance: AxiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
-// ================================================
-// INTERCEPTOR SIMPLE PARA AÑADIR TOKEN
-// ================================================
-
-// Rutas públicas que NO necesitan token
-const PUBLIC_ROUTES = ['/auth/login', '/auth/register'];
-
-axiosInstance.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    // Verificar si es una ruta pública
-    const isPublicRoute = PUBLIC_ROUTES.some(route => 
-      config.url?.startsWith(route)
-    );
-
-    // Solo añadir token si NO es una ruta pública
-    if (!isPublicRoute && config.url) {
-      try {
-        // Importación dinámica para evitar dependencia circular
-        const { getTokenFromStorage } = await import('@/utils/storage');
-        const token = await getTokenFromStorage();
-        
-        if (token && config.headers) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-      } catch (error) {
-        console.error('Error obteniendo token:', error);
-        // No lanzamos error, continuamos sin token
-      }
-    }
-    
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 // ================================================
 // FUNCIÓN PARA MANEJAR ERRORES 

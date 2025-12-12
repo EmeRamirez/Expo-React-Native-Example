@@ -4,92 +4,187 @@ import NewTaskForm from "@/components/NewTaskForm";
 import ToDoList from "@/components/ToDoList";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
-// import { mockTasks } from "@/data/mockTasks";
-import { Todo } from "@/types/todos";
-import { getTasksFromStorage, saveTasksToStorage } from "@/utils/storage";
+import { useGetTodos } from "@/services/hooks/todos/useGetTodos";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 
 export default function InicioScreen() {
   const { user } = useAuth();
   const [isCreatingTask, setIsCreatingTask] = useState(false);
-  const [userTasks, setUserTasks] = useState<Todo[]>([]);
+  
+  // Usar el hook de TanStack Query para obtener los TODOS
+  const { 
+    data: todosResponse, 
+    isLoading, 
+    isError, 
+    error, 
+    refetch 
+  } = useGetTodos();
 
-  // Se filtran las tareas del usuario actual desde AsyncStorage
-  useEffect(() => {
-    getTasksFromStorage().then((allTasks) => {
-      if (user) {
-        const filteredTasks = allTasks.filter(task => task.userId === user.id);
-        setUserTasks(filteredTasks);
-      } else {
-        setUserTasks([]);
-      }
-    });
-  }, [user]);
+  console.log(todosResponse);
 
-  const handleSaveToStorage = async (newTask: Todo) => {
-    console.log(newTask);
-    // Se añade la nueva tarea a la lista de tareas del usuario
-    const allTasks = await getTasksFromStorage();
-    const res = await saveTasksToStorage([...allTasks, newTask]);
-    
-    if (!res) {
-      alert("Error al guardar la tarea");
-    } else {
-      setIsCreatingTask(false);
-    }
-  }
+  // Extraer los datos del response
+  const userTasks = todosResponse?.data || [];
+  const taskCount = todosResponse?.count || 0;
+
+  // Manejar refresh
+  const [refreshing, setRefreshing] = useState(false);
+  
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   // Si está creando una tarea, mostrar el componente del formulario
   if (isCreatingTask) {
     return (
-      <NewTaskForm onBack={() => setIsCreatingTask(false)} onSave={handleSaveToStorage}/>
+      <NewTaskForm 
+        onBack={() => setIsCreatingTask(false)} 
+        onSave={() => {
+          setIsCreatingTask(false);
+          refetch(); // Refrescar la lista después de crear
+        }}
+      />
+    );
+  }
+
+  // Mostrar loading mientras se cargan los datos
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader title="Mis tareas" showBackButton={false} />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#007AFF" />
+          <Text style={styles.loadingText}>Cargando tus tareas...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  // Mostrar error si hay problema
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader title="Mis tareas" showBackButton={false} />
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={64} color="#FF3B30" />
+          <Text style={styles.errorTitle}>Error al cargar tareas</Text>
+          <Text style={styles.errorMessage}>
+            {error?.message || 'No se pudieron cargar tus tareas'}
+          </Text>
+          <Button 
+            title="Reintentar" 
+            onPress={() => refetch()}
+            variant="primary"
+            style={styles.retryButton}
+          />
+        </View>
+      </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <CustomHeader 
-        title="Mis tareas" 
-        showBackButton={false}
-      />
+      <CustomHeader title="Mis tareas" showBackButton={false} />
       
-      <View style={styles.content}>
-        <Text style={styles.welcomeTitle}>¡Bienvenido!</Text>
-        <Text style={styles.welcomeSubtitle}>
-          Esta es tu pantalla principal de la aplicación
-        </Text>
-
-        <View style={styles.borderBottomContainer}>
-          <Button 
-            title="Añadir una tarea" 
-            onPress={() => { setIsCreatingTask(true); }} 
-            variant="primary"
-            startIcon={
-              <Ionicons 
-                name="add-circle-outline" 
-                size={20} 
-                color="#ffffffff" 
-              />
-            }
-            fullWidth
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={['#007AFF']}
+            tintColor="#007AFF"
           />
-        </View>
+        }
+      >
+        <View style={styles.content}>
+          <View style={styles.welcomeContainer}>
+            <Text style={styles.welcomeTitle}>¡Bienvenido!</Text>
+            <Text style={styles.welcomeSubtitle}>
+              Esta es tu pantalla principal de la aplicación
+            </Text>
+          </View>
 
-        <View style={styles.tasksSection}>
-          <Text style={styles.sectionTitle}>Mis Tareas</Text>
-          <View style={styles.tasksContainer}>
-            {userTasks.length === 0 ? (
-              <Text style={{ textAlign: 'center', color: '#8E8E93' }}>
-                No tienes tareas creadas aún. Añade una nueva tarea para comenzar.
+          <View style={styles.borderBottomContainer}>
+            <Button 
+              title="Añadir una tarea" 
+              onPress={() => setIsCreatingTask(true)} 
+              variant="primary"
+              startIcon={
+                <Ionicons name="add-circle-outline" size={20} color="#FFFFFF" />
+              }
+              fullWidth
+            />
+          </View>
+
+          <View style={styles.statsContainer}>
+            <View style={styles.statCard}>
+              <Text style={styles.statNumber}>{taskCount}</Text>
+              <Text style={styles.statLabel}>Total tareas</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statNumber}>
+                {userTasks.filter(task => task.completed).length}
               </Text>
-            ): (
-              <ToDoList tasks={userTasks} />
-            )}
+              <Text style={styles.statLabel}>Completadas</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statNumber}>
+                {userTasks.filter(task => !task.completed).length}
+              </Text>
+              <Text style={styles.statLabel}>Pendientes</Text>
+            </View>
+          </View>
+
+          <View style={styles.tasksSection}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Mis Tareas</Text>
+              {taskCount > 0 && (
+                <Button 
+                  title="Refrescar"
+                  onPress={() => refetch()}
+                  variant="secondary"
+                  style={styles.refreshButton}
+                  textStyle={styles.refreshButtonText}
+                />
+              )}
+            </View>
+            
+            <View style={styles.tasksContainer}>
+              {taskCount === 0 ? (
+                <View style={styles.emptyState}>
+                  <Ionicons name="checkbox-outline" size={64} color="#C7C7CC" />
+                  <Text style={styles.emptyStateTitle}>No hay tareas</Text>
+                  <Text style={styles.emptyStateText}>
+                    Añade tu primera tarea para comenzar
+                  </Text>
+                  <Button 
+                    title="Crear tarea"
+                    onPress={() => setIsCreatingTask(true)}
+                    variant="primary"
+                    style={styles.emptyStateButton}
+                  />
+                </View>
+              ) : (
+                <ToDoList tasks={userTasks} 
+                // onTaskUpdated={refetch} 
+                />
+              )}
+            </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -99,10 +194,53 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#8E8E93',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FF3B30',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  errorMessage: {
+    fontSize: 16,
+    color: '#8E8E93',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  retryButton: {
+    minWidth: 120,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
   content: {
     flex: 1,
     paddingHorizontal: 24,
-    marginTop: 32,
+    paddingTop: 32,
+    paddingBottom: 24,
+  },
+  welcomeContainer: {
+    marginBottom: 32,
   },
   welcomeTitle: {
     fontSize: 28,
@@ -115,31 +253,86 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#8E8E93',
     textAlign: 'center',
-    marginBottom: 32,
     lineHeight: 22,
   },
   borderBottomContainer: {
     width: '100%',
-    gap: 12,
-    alignItems: 'center',
     paddingBottom: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5'
+    borderBottomColor: '#E5E5E5',
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 24,
+    paddingHorizontal: 8,
+  },
+  statCard: {
+    alignItems: 'center',
+    flex: 1,
+    padding: 12,
+    backgroundColor: '#F8F8F8',
+    borderRadius: 12,
+    marginHorizontal: 4,
+  },
+  statNumber: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#8E8E93',
+    textAlign: 'center',
   },
   tasksSection: {
     flex: 1,
     width: '100%',
-    marginTop: 16,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#000000',
-    marginBottom: 7,
-    textAlign: 'center',
+  },
+  refreshButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  refreshButtonText: {
+    fontSize: 14,
   },
   tasksContainer: {
     flex: 1,
     width: '100%',
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyStateTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: '#8E8E93',
+    textAlign: 'center',
+    marginBottom: 24,
+    maxWidth: 300,
+  },
+  emptyStateButton: {
+    minWidth: 150,
   },
 });
