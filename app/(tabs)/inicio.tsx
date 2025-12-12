@@ -51,7 +51,7 @@ export default function InicioScreen() {
         onBack={() => setIsCreatingTask(false)} 
         onSave={() => {
           setIsCreatingTask(false);
-          refetch(); // Refrescar la lista después de crear
+          refetch(); // Refrescar lista después de crear
         }}
       />
     );
@@ -178,7 +178,7 @@ export default function InicioScreen() {
                 </View>
               ) : (
                 <ToDoList tasks={userTasks} 
-                // onTaskUpdated={refetch} 
+                // onTaskUpdated={refetch} // Descomentar si quieres refrescar al actualizar (Se debe añadir al componente ToDoList)
                 />
               )}
             </View>

@@ -84,6 +84,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         saveSessionToStorage(userData),
         saveTokenToStorage(authToken)
       ]);
+
+      console.log("USER:", userData);
       
       // Actualizar estado
       setUser(userData);

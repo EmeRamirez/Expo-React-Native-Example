@@ -219,6 +219,48 @@ export const ApiClient = {
       throw apiError;
     }
   },
+
+  /**
+ * Método especial para upload de archivos (multipart/form-data)
+ */
+  upload: async <T>(
+    url: string, 
+    formData: FormData, 
+    config?: AxiosRequestConfig
+  ): Promise<T> => {
+    try {
+      const response = await axiosInstance.post<T>(url, formData, {
+        ...config,
+        headers: {
+          ...config?.headers,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      const apiError = handleApiError(error as AxiosError);
+      throw apiError;
+    }
+  },
+
+  /**
+   * Método para descargar archivos binarios
+   */
+  download: async (
+    url: string, 
+    config?: AxiosRequestConfig
+  ): Promise<ArrayBuffer> => {
+    try {
+      const response = await axiosInstance.get(url, {
+        ...config,
+        responseType: 'arraybuffer', // Para recibir binario
+      });
+      return response.data;
+    } catch (error) {
+      const apiError = handleApiError(error as AxiosError);
+      throw apiError;
+    }
+  },
 };
 
 export default ApiClient;
