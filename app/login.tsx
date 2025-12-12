@@ -2,7 +2,7 @@
 import CustomHeader from "@/components/layout/CustomHeader";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
-import { useLogin } from "@/services/hooks/useLogin";
+import { useLogin } from "@/services/hooks/auth/useLogin";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {

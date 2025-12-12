@@ -9,7 +9,7 @@ export interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateAuthState: (user: User, token: string) => Promise<boolean>;
   isLoading: boolean;
   isAuthenticated: boolean;

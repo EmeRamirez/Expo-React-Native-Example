@@ -5,17 +5,16 @@ import ToDoList from "@/components/ToDoList";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
 // import { mockTasks } from "@/data/mockTasks";
-import { Task } from "@/types/tasks";
+import { Todo } from "@/types/todos";
 import { getTasksFromStorage, saveTasksToStorage } from "@/utils/storage";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-
 export default function InicioScreen() {
   const { user } = useAuth();
   const [isCreatingTask, setIsCreatingTask] = useState(false);
-  const [userTasks, setUserTasks] = useState<Task[]>([]);
+  const [userTasks, setUserTasks] = useState<Todo[]>([]);
 
   // Se filtran las tareas del usuario actual desde AsyncStorage
   useEffect(() => {
@@ -29,7 +28,7 @@ export default function InicioScreen() {
     });
   }, [user]);
 
-  const handleSaveToStorage = async (newTask: Task) => {
+  const handleSaveToStorage = async (newTask: Todo) => {
     console.log(newTask);
     // Se añade la nueva tarea a la lista de tareas del usuario
     const allTasks = await getTasksFromStorage();

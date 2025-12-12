@@ -1,8 +1,8 @@
 // services/hooks/useLogin.ts
 import { useAuth } from '@/context/AuthContext';
 import { useMutation } from '@tanstack/react-query';
-import { AuthService, LoginCredentials, LoginResponse } from '../auth/AuthService';
-import { ApiError } from '../base/ApiClient';
+import { AuthService, LoginCredentials, LoginResponse } from '../../auth/AuthService';
+import { ApiError } from '../../base/ApiClient';
 
 export const useLogin = () => {
     const { updateAuthState } = useAuth();
@@ -27,6 +27,7 @@ export const useLogin = () => {
             }
         },
         onError: (error: ApiError) => {
+            console.log(error);
             console.error('Error en login:', error.message);
             // El error ya viene formateado desde ApiClient
         }

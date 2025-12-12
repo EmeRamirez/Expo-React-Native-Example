@@ -96,7 +96,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     try {
       // Limpiar AsyncStorage
       await Promise.all([
@@ -107,8 +107,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Limpiar estado
       setUser(null);
       setToken(null);
+      
+      console.log('Logout exitoso - datos locales eliminados');
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('Error durante logout:', error);
+      throw error; // Opcional: propagar error si necesitas manejarlo
     }
   };
 

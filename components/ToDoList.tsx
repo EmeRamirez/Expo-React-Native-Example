@@ -1,5 +1,5 @@
 // components/ToDoList.tsx
-import { Task } from '@/types/tasks';
+import { Todo } from '@/types/todos';
 import { deleteTaskFromStorage, updateCompletedTaskStatus } from '@/utils/storage';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ import {
 import Map from './Map';
 
 interface ToDoListProps {
-  tasks: Task[];
+  tasks: Todo[];
 }
 
 // EN ESTE COMPONENTE SE DEBE AÑADIR:
@@ -90,7 +90,7 @@ export default function ToDoList({ tasks }: ToDoListProps) {
     }
   };
 
-  const renderTaskItem = (task: Task) => {
+  const renderTaskItem = (task: Todo) => {
     const isCompleted = task.completed;
     const isExpanded = expandedTasks[task.id];
 
