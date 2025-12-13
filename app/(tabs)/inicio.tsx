@@ -4,11 +4,14 @@ import NewTaskForm from "@/components/NewTaskForm";
 import ToDoList from "@/components/ToDoList";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
+import { queryClient } from "@/services/api/queryClient";
 import { useGetTodos } from "@/services/hooks/todos/useGetTodos";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -17,7 +20,8 @@ import {
 } from "react-native";
 
 export default function InicioScreen() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const router = useRouter();
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   
   // Usar el hook de TanStack Query para obtener los TODOS
@@ -43,6 +47,30 @@ export default function InicioScreen() {
     await refetch();
     setRefreshing(false);
   };
+
+  const handleLogout = async () => {
+
+      try {
+        // 1. Cancelar TODAS las queries pendientes primero
+        await queryClient.cancelQueries();
+        
+        // 2. Ejecutar logout (limpia AsyncStorage)
+        await logout();
+        
+        // 3. Limpiar caché COMPLETA de TanStack Query
+        queryClient.clear();
+        
+        // 4. Pequeño delay para asegurar que todo se limpió
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // 5. Redirigir a login
+        router.replace("/login");
+        
+      } catch (error) {
+        console.error('Error en logout:', error);
+        Alert.alert("Error", "No se pudo cerrar sesión. Intenta de nuevo.");
+      } 
+    };
 
   // Si está creando una tarea, mostrar el componente del formulario
   if (isCreatingTask) {
@@ -87,6 +115,14 @@ export default function InicioScreen() {
             variant="primary"
             style={styles.retryButton}
           />
+          {/* Boton para navegar al login */}
+          <Button 
+            title="Iniciar sesión" 
+            onPress={handleLogout}
+            variant="secondary"
+            style={[styles.retryButton, { marginTop: 12 }]}
+          />
+
         </View>
       </View>
     );
@@ -150,7 +186,7 @@ export default function InicioScreen() {
           <View style={styles.tasksSection}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Mis Tareas</Text>
-              {taskCount > 0 && (
+              {/* {taskCount > 0 && (
                 <Button 
                   title="Refrescar"
                   onPress={() => refetch()}
@@ -158,7 +194,7 @@ export default function InicioScreen() {
                   style={styles.refreshButton}
                   textStyle={styles.refreshButtonText}
                 />
-              )}
+              )} */}
             </View>
             
             <View style={styles.tasksContainer}>
