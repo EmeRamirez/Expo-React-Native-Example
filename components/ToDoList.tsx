@@ -235,7 +235,6 @@ export default function ToDoList({ tasks, onTaskUpdated }: ToDoListProps) {
                   <Map 
                     initialLocation={task.location} 
                     onLocationSelect={() => {}} 
-                    readOnly={true}
                   />
                   <View style={styles.coordinatesContainer}>
                     <Text style={styles.coordinatesText}>
@@ -444,6 +443,8 @@ const styles = StyleSheet.create({
   },
   mapContainer: {
     gap: 8,
+    height: 200,
+    width: '100%',
   },
   coordinatesContainer: {
     flexDirection: 'row',

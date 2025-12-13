@@ -1,6 +1,6 @@
-import { Coordinates } from "@/types/tasks";
+import { Location } from "@/types/todos";
 import { Ionicons } from "@expo/vector-icons";
-import * as Location from 'expo-location';
+import * as LocationExpo from 'expo-location';
 import React, { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
@@ -8,12 +8,12 @@ import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 
 
 interface MapProps {
-  onLocationSelect: (location: Coordinates) => void;
-  initialLocation?: Coordinates;
+  onLocationSelect: (location: Location) => void;
+  initialLocation?: Location;
 }
 
 export default function Map({ onLocationSelect, initialLocation }: MapProps) {
-  const [selectedLocation, setSelectedLocation] = useState<Coordinates | null>(
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
     initialLocation || null
   );
   const [region, setRegion] = useState({
@@ -37,13 +37,13 @@ export default function Map({ onLocationSelect, initialLocation }: MapProps) {
 
   const getCurrentLocation = async () => {
     try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      let { status } = await LocationExpo.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         alert('Permiso de ubicación denegado');
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
+      let location = await LocationExpo.getCurrentPositionAsync({});
       const { latitude, longitude } = location.coords;
       
       const newRegion = {

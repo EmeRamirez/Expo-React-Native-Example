@@ -17,11 +17,26 @@ Esta aplicación fue desarrollada con el fin de explorar el framework Expo. No t
 
 ✅ Layout: CustomHeader inteligente con navegación condicional
 
-✅ Persistencia de datos: Persistencia de datos por medio de AsyncStorage
+✅ Persistencia de datos: Persistencia de datos por medio de base de datos NoSql (MongoDB)
+
+✅ Persistencia de datos: AsyncStorage para datos locales, tokens y sesiones
+
+✅ Persistencia de impagenes: Almacenamiento de imágenes con CDN global (Cloudflare R2)
 
 ✅ API para uso de cámara y GPS: Funcionalidades compatibles con iOS y Android
 
-✅ Desarrollo: Asistencia con IA para agilizar desarrollo (Diseño de vistas)
+✅ Desarrollo: Asistencia con IA para agilizar desarrollo (Diseño de vistas y optimización de servicios)
+
+### Comunicación con Backend
+- Axios: Cliente HTTP con interceptores, manejo de errores centralizado y tipado TypeScript
+- API RESTful: Consumo de endpoints autenticados con JWT
+- Manejo de Errores: Sistema centralizado para errores de API, red y validación (incluyendo Zod)
+
+### Sistema de Autenticación
+- JWT (JSON Web Tokens): Autenticación stateless con expiración
+- Protección de Rutas: Middleware a nivel de navegación y API
+- Almacenamiento Seguro: Tokens en AsyncStorage con encriptación
+
 
 ### Requisitos Previos
 Node.js (Versión 18 o superior)
@@ -64,6 +79,14 @@ mi-proyecto-react-native/
 │   ├── login.tsx          # Pantalla de login
 │   ├── index.tsx          # Pantalla principal/landing
 │   └── _layout.tsx        # Layout raíz de la app
+├── services/              # Capa de servicios y API
+│   ├── api/              # Configuración y clientes HTTP
+│   │   ├── queryClient.ts # Configuración de TanStack Query
+│   │   ├── ApiClient.ts  # Cliente Axios con interceptores
+│   │   ├── todos/        # Servicios de tareas
+│   │   │   └── todoService.ts # CRUD de tareas
+│   │   └── images/       # Servicios de imágenes
+│   │       └── imageService.ts # Upload/delete a Cloudflare R2
 ├── assets/                # Recursos estáticos
 │   └── images/           # Iconos, imágenes
 ├── components/           # Componentes reutilizables varios
@@ -75,10 +98,9 @@ mi-proyecto-react-native/
 │   └── AuthContext.tsx  # Contexto de autenticación
 ├── types/               # Definiciones TypeScript
 │   └── auth.ts         # Tipos para autenticación
-│   └── tasks.ts        # Tipos para tareas y location
-├── data/               # Datos mock y estáticos
-│   └── mockUsers.ts    # Usuarios de prueba
-├── utils/              # Utilidades varias
+│   └── images.ts       # Tipos para imágenes
+│   └── todos.ts        # Tipos para todos  
+└── utils/              # Utilidades varias
     └── storage.ts      # funciones CRUD con AsyncStorage
 ```
 
