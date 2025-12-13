@@ -56,6 +56,12 @@ cd ev-1
 npm install
 ```
 
+#### 3. Crear variable de entorno para la API
+Crear archivo .env.local en la raíz del proyecto con el siguiente contenido
+```
+EXPO_PUBLIC_API_URL=https://todo-list.dobleb.cl
+```
+
 #### 3. Iniciar el servidor de desarrollo
 ```
 npm start
