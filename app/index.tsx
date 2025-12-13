@@ -40,7 +40,7 @@ export default function Index() {
           source={ipssLogo}
           style={{ width: 200, height: 40, marginBottom: 20 }}
         />
-        <Text>Evaluación 2</Text>
+        <Text>Evaluación 3</Text>
         <Text>Desarrollo de Aplicaciones Móviles - IPSS 2025</Text>
         {/* Insertar imagen */}
         

@@ -1,2 +1,9 @@
+Nombres:
+- Camila Astorga
+- Amanecer Cabrera
+- Carlos Gonzalez
+- Emerson Ramirez
+
 Repositorio: https://github.com/EmeRamirez/Expo-React-Native-Example
-Video Demo: https://youtube.com/shorts/UwJPNo94ymQ
+Video Demo: https://www.youtube.com/shorts/sW8v8NrkDa8
+Fecha: 13/12/2025
